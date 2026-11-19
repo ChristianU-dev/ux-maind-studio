@@ -37,11 +37,53 @@ def office_renderer():
     )
 
 
+def cached_office_pdf(original: Path, display_root: Path):
+    """Return a SHA-256-verified cached display PDF if already present (e.g. from a review package)."""
+    if not display_root.is_dir() or display_root.is_symlink():
+        return None
+    from .evidence import file_digest
+
+    want_sha = file_digest(original)
+    for entry in display_root.iterdir():
+        if not entry.is_dir() or entry.is_symlink() or entry.name == "lo-profile":
+            continue
+        meta_file = entry / "display.json"
+        if not meta_file.is_file() or meta_file.is_symlink():
+            continue
+        try:
+            meta = json.loads(meta_file.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if meta.get("source_sha256") != want_sha:
+            continue
+        candidates = [entry / f"{original.stem}.pdf", *entry.glob("*.pdf")]
+        for pdf_file in candidates:
+            if not pdf_file.is_file() or pdf_file.is_symlink():
+                continue
+            try:
+                with pdf_file.open("rb") as stream:
+                    if stream.read(5) != b"%PDF-":
+                        continue
+                if meta.get("display_sha256") and file_digest(pdf_file) != meta["display_sha256"]:
+                    continue
+                return pdf_file, meta
+            except OSError:
+                continue
+    return None
+
+
+def has_cached_office_pdf(workspace, row) -> bool:
+    if not row or not row.get("stored"):
+        return False
+    try:
+        orig = workspace.artifact(row, "stored")
+        return cached_office_pdf(orig, workspace.root / "display") is not None
+    except (OSError, ValueError):
+        return False
+
+
 def office_pdf(source, destination):
-    """Render an Office document via headless LibreOffice into display_root/<sha256>."""
-    renderer = office_renderer()
-    if not renderer:
-        raise ValueError("LibreOffice nicht installiert")
+    """Render an Office document via headless LibreOffice into display_root/<sha256>, or serve verified cache."""
     from .evidence import file_digest
 
     if hasattr(source, "artifact"):
@@ -52,6 +94,12 @@ def office_pdf(source, destination):
         original = Path(source).resolve()
         display_root = Path(destination).resolve()
         workspace_root = display_root.parent
+    cached = cached_office_pdf(original, display_root)
+    renderer = office_renderer()
+    if not renderer:
+        if cached is not None:
+            return cached
+        raise ValueError("LibreOffice nicht installiert")
     stat = Path(renderer).stat()
     identity = dict(
         source_sha256=file_digest(original),

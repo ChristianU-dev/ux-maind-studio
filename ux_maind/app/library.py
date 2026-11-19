@@ -32,17 +32,78 @@ def _decode_setting_string(raw_value: str) -> str:
     return raw_value
 
 
+def default_workspace_path() -> Path:
+    """Permanent default application workspace path (`%LOCALAPPDATA%\\UX-mAInd\\workspace` on Windows)."""
+    base = Path(os.environ.get("LOCALAPPDATA", Path.home() / ".local/share"))
+    return (base / "UX-mAInd" / "workspace").resolve()
+
+
+def probe_legacy_workspace(workspace) -> dict:
+    """Read-only check for an existing sibling `workspace-r12` folder without modifying it."""
+    ws_root = Path(workspace.root).resolve()
+    legacy_dir = ws_root.parent / "workspace-r12"
+    if (
+        ws_root == legacy_dir
+        or not legacy_dir.is_dir()
+        or legacy_dir.is_symlink()
+        or legacy_dir.is_junction()
+    ):
+        return {"found": False, "path": str(legacy_dir)}
+    db_file = legacy_dir / "workspace.sqlite"
+    if not db_file.is_file() or db_file.is_symlink():
+        return {"found": False, "path": str(legacy_dir)}
+    docs = runs = findings = profiles = 0
+    try:
+        conn = sqlite3.connect(f"file:{db_file.as_posix()}?mode=ro", uri=True, timeout=3.0)
+        try:
+            docs = int(conn.execute("SELECT count(*) FROM documents").fetchone()[0])
+            runs = int(conn.execute("SELECT count(*) FROM runs").fetchone()[0])
+            findings = int(
+                conn.execute("SELECT count(*) FROM ux_objects WHERE kind='finding'").fetchone()[0]
+            )
+            profiles = int(conn.execute("SELECT count(*) FROM profiles").fetchone()[0])
+        finally:
+            conn.close()
+    except sqlite3.Error:
+        return {"found": False, "path": str(legacy_dir)}
+    has_data = bool(docs or runs or findings or profiles)
+    return {
+        "found": has_data,
+        "path": str(legacy_dir),
+        "documents": docs,
+        "runs": runs,
+        "findings": findings,
+        "profiles": profiles,
+    }
+
+
 def paths(workspace):
     with workspace.db() as db:
         row = db.execute(
             "SELECT value FROM workspace_settings WHERE name='output'"
         ).fetchone()
+        current_docs = int(db.execute("SELECT count(*) FROM documents").fetchone()[0])
+    default_ws = default_workspace_path()
+    ws_root = Path(workspace.root).resolve()
+    legacy = probe_legacy_workspace(workspace)
+    legacy_root = (ws_root.parent / "workspace-r12").resolve()
+    stored_out = _decode_setting_string(row["value"]) if row else None
+    use_default_out = row is None
+    if stored_out and ws_root != legacy_root:
+        try:
+            if Path(stored_out).resolve().is_relative_to(legacy_root):
+                stored_out = None
+                use_default_out = True
+        except OSError:
+            pass
     return dict(
         workspace=str(workspace.root),
-        output=_decode_setting_string(row["value"])
-        if row
-        else str(workspace.root / "exports"),
-        output_default=row is None,
+        default_workspace=str(default_ws),
+        is_default_workspace=ws_root == default_ws,
+        current_documents=current_docs,
+        output=stored_out if stored_out else str(workspace.root / "exports"),
+        output_default=use_default_out,
+        legacy_workspace=legacy,
     )
 
 

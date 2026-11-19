@@ -419,7 +419,10 @@ def objects(w, numbers):
                     if last["origin"] in ("human", "human_carried_forward")
                     else "AUTOMATED_"
                 ) + last["action"].upper()
-    return [r for r in rows if set(r["metadata"].get("scope", [])) <= scope]
+    filtered = [r for r in rows if set(r["metadata"].get("scope", [])) <= scope]
+    from . import dual_review
+
+    return dual_review.apply_dual_review_projection(w, filtered, scope=scope)
 
 
 def create(w, kind, proposal, numbers, metadata=None, *, db=None):
@@ -1021,12 +1024,15 @@ def graph(w, numbers, *, history=False, basis=None, result_runs=None):
             i.get("status") == "EDGE_ROLE_LOSS" for i in warnings
         ),
     )
+    from . import dual_review
+
     return dict(
         graph=graph_to_dict(native) if native is not None else dict(nodes=[], edges=[]),
         **data,
         objects=saved,
         prior_attempt_objects=len(all_saved) - len(saved),
         issues=warnings,
+        dual_review_sessions=dual_review.list_sessions(w, scope_docs=list(scope)),
         analysis=dict(
             status=status,
             stages=analysis_stages(all_saved, scope, current_runs),
@@ -1096,6 +1102,21 @@ def decide(w, body):
             ).fetchone()
         if row is None:
             raise ValueError("Forschungsobjekt nicht gefunden")
+        if target_type == "finding":
+            from . import dual_review
+
+            unreleased = dual_review.guard_direct_finding_decision(w, obj_id)
+            if unreleased is not None:
+                return dual_review.save_judgment(
+                    w,
+                    {
+                        "session_id": unreleased["session_id"],
+                        "finding_id": obj_id,
+                        "action": action,
+                        "reason": reason,
+                        "interpretation": payload.get("interpretation"),
+                    },
+                )
         target_key = str(obj_id)
 
     at = datetime.now(timezone.utc).isoformat()
@@ -1359,12 +1380,38 @@ def markdown_report(w, numbers, *, basis=None, result_runs=None, lang="de"):
                 f"(`{p.get('improvement_basis') or 'unspecified'}`):** {p['improvement_hypothesis']}"
             )
             lines.append("")
-        human_decs = [d for d in f.get("decisions", []) if d.get("origin") == "human"]
+        dr = f.get("dual_review") or {}
+        if dr.get("released"):
+            res_state = dr.get("resolution_state")
+            if res_state == "OPEN_DISAGREEMENT":
+                lines.append(
+                    f"- **{'Dual Review' if en else 'Zweitprüfung'}:** "
+                    f"⚠️ **{'OPEN DISAGREEMENT (unresolved divergence between Reviewer 1 and Reviewer 2)' if en else 'OFFENE ABWEICHUNG (abweichende Urteile zwischen Prüfer 1 und Prüfer 2 noch offen)'}**"
+                )
+            elif res_state == "ADOPTED":
+                adopted_src = (dr.get("resolution") or {}).get("adopted_from") or "-"
+                lines.append(
+                    f"- **{'Dual Review' if en else 'Zweitprüfung'}:** "
+                    f"`ADOPTED ({adopted_src})` — {(dr.get('resolution') or {}).get('reason') or ''}"
+                )
+            elif res_state == "PENDING_ADOPTION":
+                lines.append(
+                    f"- **{'Dual Review' if en else 'Zweitprüfung'}:** "
+                    f"`PENDING_ADOPTION` — {'Comparison released; explicit adoption into study state pending' if en else 'Vergleich freigegeben; Übernahme in den Studienstand noch offen'}"
+                )
+            lines.append("")
+        human_decs = [
+            d
+            for d in f.get("decisions", [])
+            if d.get("origin") in ("human", "dual_review", "dual_review_adopted")
+        ]
         if human_decs:
             lines.append("#### " + ("Researcher Decisions & Notes" if en else "Forscherentscheidungen & Notizen"))
             for d in human_decs:
+                rev_name = ((d.get("payload") or {}).get("reviewer") or {}).get("name")
+                who_part = f" ({rev_name})" if rev_name else ""
                 note_part = f" — _{d['reason']}_" if d.get("reason") else ""
-                lines.append(f"- `{d.get('at', '')[:19]}` · **`{d.get('action')}`**{note_part}")
+                lines.append(f"- `{d.get('at', '')[:19]}` · **`{d.get('action')}`**{who_part}{note_part}")
             lines.append("")
         lines.append("#### " + ("Anchored Source Quotes" if en else "Verankerte Originalbelege"))
         for role_key, role_label in (
@@ -1397,7 +1444,11 @@ def markdown_report(w, numbers, *, basis=None, result_runs=None, lang="de"):
         lines.append("")
         for rf in rejected_findings:
             rp = rf.get("effective", {})
-            decs = [d for d in rf.get("decisions", []) if d.get("origin") == "human"]
+            decs = [
+                d
+                for d in rf.get("decisions", [])
+                if d.get("origin") in ("human", "dual_review", "dual_review_adopted")
+            ]
             reason_txt = decs[-1].get("reason") if decs and decs[-1].get("reason") else ("Rejected by researcher" if en else "Menschlich verworfen")
             lines.append(f"- **#{rf['id']} {rp.get('title') or ''}** (`HUMAN_REJECTED`) — _{reason_txt}_")
         lines.append("")

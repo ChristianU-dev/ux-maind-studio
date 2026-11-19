@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1560 936" width="1560" height="936">
+
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 22px 'Segoe UI', Inter, system-ui, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 13px 'Segoe UI', Inter, system-ui, sans-serif; fill: #475569; }
+      .lane-title { font: 700 13px 'Segoe UI', Inter, system-ui, sans-serif; fill: #0f172a; letter-spacing: 0.04em; }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box-teal { fill: #f0fdfa; stroke: #0d9488; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-sky { fill: #f0f9ff; stroke: #0284c7; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-amber { fill: #fffbeb; stroke: #d97706; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-emerald { fill: #ecfdf5; stroke: #059669; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-rose { fill: #fff1f2; stroke: #e11d48; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-violet { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.9; rx: 10; ry: 10; }
+      .box-slate { fill: #f1f5f9; stroke: #64748b; stroke-width: 1.6; rx: 10; ry: 10; }
+      .lane { fill: #f1f5f9; stroke: #cbd5e1; stroke-width: 1.2; stroke-dasharray: 5 4; rx: 14; ry: 14; }
+      .box-head { font: 700 13.5px 'Segoe UI', Inter, system-ui, sans-serif; fill: #0f172a; }
+      .box-code { font: 600 11.5px Consolas, 'JetBrains Mono', monospace; fill: #0f766e; }
+      .box-text { font: 400 12px 'Segoe UI', Inter, system-ui, sans-serif; fill: #334155; }
+      .badge { font: 700 10.5px Consolas, monospace; fill: #ffffff; }
+      .edge { stroke: #475569; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+      .edge-teal { stroke: #0d9488; stroke-width: 2.0; fill: none; marker-end: url(#arrow-teal); }
+      .edge-amber { stroke: #d97706; stroke-width: 1.9; stroke-dasharray: 6 4; fill: none; marker-end: url(#arrow-amber); }
+      .edge-ext { stroke: #0284c7; stroke-width: 2.1; stroke-dasharray: 8 4; fill: none; marker-end: url(#arrow-sky); }
+      .edge-file { stroke: #7c3aed; stroke-width: 2.4; stroke-dasharray: 3 3; fill: none; marker-end: url(#arrow-violet); }
+      .edge-label { font: 600 11px 'Segoe UI', Inter, system-ui, sans-serif; fill: #334155; }
+      .legend-box { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.2; rx: 8; ry: 8; }
+      .legend-txt { font: 600 11px 'Segoe UI', Inter, system-ui, sans-serif; fill: #1e293b; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
+    </marker>
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0d9488" />
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#d97706" />
+    </marker>
+    <marker id="arrow-sky" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284c7" />
+    </marker>
+    <marker id="arrow-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#7c3aed" />
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1560" height="936" class="bg" />
+  <text x="32" y="42" class="title">Moduldiagramm 08 — Zweitprüfung auf zwei Rechnern: Dateiübergaben, Freigabe-Schranke &amp; Überarbeitung</text>
+  <text x="32" y="65" class="subtitle">Vollständiges Offline-Austauschprotokoll (.zip / .json) ohne Serververbindung oder erneuten Modelllauf auf Rechner 2</text>
+  <rect x="706" y="20" width="830" height="48" class="legend-box" />
+<line x1="722" y1="44" x2="768" y2="44" class="edge-teal" />
+<text x="776" y="48" class="legend-txt">Lokaler In-App-Fluss (SQLite / 127.0.0.1)</text>
+<line x1="1024" y1="44" x2="1070" y2="44" class="edge-ext" />
+<text x="1078" y="48" class="legend-txt">Opt. externer Modellaufruf (oder lokal Ollama)</text>
+<line x1="1346" y1="44" x2="1392" y2="44" class="edge-file" />
+<text x="1400" y="48" class="legend-txt">Lokaler Dateitransfer</text>
+<rect x="28" y="88" width="560" height="820" class="lane" />
+<text x="48" y="114" class="lane-title">RECHNER 1 · AUSGANGSRECHNER (PRÜFER 1 · STUDIENLEITUNG)</text>
+<rect x="612" y="88" width="336" height="820" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.4" stroke-dasharray="6 4" rx="14" ry="14" />
+<text x="632" y="114" class="lane-title">LOKALER DATEITRANSFER (.ZIP / .JSON)</text>
+<rect x="972" y="88" width="560" height="820" class="lane" />
+<text x="992" y="114" class="lane-title">RECHNER 2 · EMPFÄNGER (PRÜFER 2 · 0 MODELLAUFRUFE · OFFLINE)</text>
+<rect x="48" y="134" width="520" height="142" class="box-teal" />
+<rect x="472" y="145" width="84" height="20" rx="5" fill="#0d9488" />
+<text x="514" y="159" text-anchor="middle" class="badge">R1 · START</text>
+<text x="62" y="160" class="box-head">1. Zweitprüfung ‚Auf zwei Rechnern‘ starten &amp; Prüfer 1 bewertet</text>
+<text x="62" y="179" class="box-code">create_session(mode=&#x27;two_machines&#x27;) · save_judgment() · submit_slot()</text>
+<text x="62" y="199" class="box-text">• Optional zuvor gelaufene KI-Pipeline (Lokal Ollama / Opt. HTTPS-API)</text>
+<text x="62" y="217" class="box-text">• Friert ausgewählte Findings, A-Läufe &amp; Originaldokumente ein (baseline_sha256)</text>
+<text x="62" y="235" class="box-text">• Prüfer 1 bewertet verblindet &amp; gibt Ersturteil ab (bleibt auf R1 geschützt)</text>
+<rect x="628" y="148" width="304" height="114" class="box-violet" />
+<rect x="836" y="159" width="84" height="20" rx="5" fill="#7c3aed" />
+<text x="878" y="173" text-anchor="middle" class="badge">TRANSFER 1</text>
+<text x="642" y="174" class="box-head">Datei 1 · Prüfpaket (.zip)</text>
+<text x="642" y="193" class="box-code">ux-pruefpaket-&lt;id&gt;.zip</text>
+<text x="642" y="213" class="box-text">• Originale + Docling JSON + Display-PDF</text>
+<text x="642" y="231" class="box-text">• A/B/C-Ausgangsstand + SHA-256-Manifest</text>
+<text x="642" y="249" class="box-text">• ENTHÄLT 0 URTEILE VON PRÜFER 1!</text>
+<rect x="992" y="134" width="520" height="142" class="box-teal" />
+<rect x="1409" y="145" width="91" height="20" rx="5" fill="#0d9488" />
+<text x="1455" y="159" text-anchor="middle" class="badge">R2 · IMPORT</text>
+<text x="1006" y="160" class="box-head">2. Prüfpaket importieren &amp; Originalbelege in Dual-View prüfen</text>
+<text x="1006" y="179" class="box-code">import_package(.zip) · _rebind_run_result_for_local_doc()</text>
+<text x="1006" y="199" class="box-text">• Prüft package_sha256 &amp; alle Datei-Hashes vor dem ersten Schreibzugriff</text>
+<text x="1006" y="217" class="box-text">• Öffnet Findings &amp; Originalbelege (PDF/Office/TXT + Docling) komplett lokal</text>
+<text x="1006" y="235" class="box-text">• Keine Verbindung zu Rechner 1 und KEIN erneuter Sprachmodell-Lauf nötig!</text>
+<line x1="568" y1="205" x2="628" y2="205" class="edge-file" />
+<line x1="932" y1="205" x2="992" y2="205" class="edge-file" />
+<rect x="992" y="306" width="520" height="136" class="box-violet" />
+<rect x="1409" y="317" width="91" height="20" rx="5" fill="#7c3aed" />
+<text x="1455" y="331" text-anchor="middle" class="badge">R2 · ABGABE</text>
+<text x="1006" y="332" class="box-head">3. Prüfer 2 bewertet verblindet &amp; gibt Ersturteil verbindlich ab</text>
+<text x="1006" y="351" class="box-code">save_judgment(slot=&#x27;reviewer_b&#x27;) · submit_slot()</text>
+<text x="1006" y="371" class="box-text">• Prüfer 2 sieht nur den gemeinsamen Ausgangsvorschlag &amp; eigene Eingaben</text>
+<text x="1006" y="389" class="box-text">• Verbindliche Abgabe friert submitted_b_at &amp; Ersturteil (phase=&#x27;initial&#x27;) ein</text>
+<text x="1006" y="407" class="box-text">• Exportiert signierte Rückgabedatei für Rechner 1</text>
+<rect x="628" y="316" width="304" height="116" class="box-violet" />
+<rect x="836" y="327" width="84" height="20" rx="5" fill="#7c3aed" />
+<text x="878" y="341" text-anchor="middle" class="badge">TRANSFER 2</text>
+<text x="642" y="342" class="box-head">Datei 2 · Rückgabe Prüfer 2 (.json)</text>
+<text x="642" y="361" class="box-code">ux-abgabe-&lt;id&gt;-reviewer_b.json</text>
+<text x="642" y="381" class="box-text">• Prüft session_id &amp; baseline_sha256</text>
+<text x="642" y="399" class="box-text">• Re-Import idempotent (0 Duplikate)</text>
+<text x="642" y="417" class="box-text">• Fremde/defekte Datei -&gt; atomarer Abbruch</text>
+<rect x="48" y="306" width="520" height="136" class="box-amber" />
+<rect x="451" y="317" width="105" height="20" rx="5" fill="#d97706" />
+<text x="504" y="331" text-anchor="middle" class="badge">FREIGABE-GATE</text>
+<text x="62" y="332" class="box-head">4. Rückgabe einlesen &amp; Freigabe-Schranke prüfen</text>
+<text x="62" y="351" class="box-code">import_package(.json) -&gt; release_comparison()</text>
+<text x="62" y="371" class="box-text">• Vor Freigabe: Fehlt Abgabe 1 oder Abgabe 2 -&gt; Freigabe gesperrt!</text>
+<text x="62" y="389" class="box-text">• Sobald BEIDE Ersturteile vorliegen -&gt; Klick auf ‚Vergleich freigeben‘</text>
+<text x="62" y="407" class="box-text">• Ab jetzt sind beide Urteile, Notizen &amp; Korrekturen auf R1 sichtbar!</text>
+<line x1="992" y1="374" x2="932" y2="374" class="edge-file" />
+<line x1="628" y1="374" x2="568" y2="374" class="edge-file" />
+<rect x="48" y="474" width="520" height="128" class="box-amber" />
+<rect x="444" y="485" width="112" height="20" rx="5" fill="#d97706" />
+<text x="500" y="499" text-anchor="middle" class="badge">R1 · VERGLEICH</text>
+<text x="62" y="500" class="box-head">5. Freigegebenen Vergleich für Rechner 2 bereitstellen</text>
+<text x="62" y="519" class="box-code">export_comparison_json()</text>
+<text x="62" y="539" class="box-text">• Bündelt eingefrorene Ersturteile (Prüfer 1 &amp; Prüfer 2) + Freigabezeitpunkt</text>
+<text x="62" y="557" class="box-text">• Ermöglicht Prüfer 2 die transparente Einsicht auf dem eigenen Rechner</text>
+<rect x="628" y="480" width="304" height="116" class="box-violet" />
+<rect x="836" y="491" width="84" height="20" rx="5" fill="#7c3aed" />
+<text x="878" y="505" text-anchor="middle" class="badge">TRANSFER 3</text>
+<text x="642" y="506" class="box-head">Datei 3 · Vergleichsdatei (.json)</text>
+<text x="642" y="525" class="box-code">ux-vergleich-&lt;id&gt;.json</text>
+<text x="642" y="545" class="box-text">• Enthält beide Ersturteile + Diffs</text>
+<text x="642" y="563" class="box-text">• Schaltet Vergleichsansicht auf R2 frei</text>
+<text x="642" y="581" class="box-text">• SHA-256-gesichert &amp; idempotent</text>
+<rect x="992" y="474" width="520" height="128" class="box-sky" />
+<rect x="1395" y="485" width="105" height="20" rx="5" fill="#0284c7" />
+<text x="1448" y="499" text-anchor="middle" class="badge">R2 · REVISION</text>
+<text x="1006" y="500" class="box-head">6. Vergleich auf Rechner 2 sichten &amp; optional überarbeiten</text>
+<text x="1006" y="519" class="box-code">import_package(ux-vergleich) · save_judgment(phase=&#x27;revision&#x27;)</text>
+<text x="1006" y="539" class="box-text">• Prüfer 2 sieht beide Bewertungen &amp; Korrekturvorschläge nebeneinander</text>
+<text x="1006" y="557" class="box-text">• Optional: Folgebewertung erfassen (Ersturteil bleibt separat erhalten!)</text>
+<line x1="568" y1="538" x2="628" y2="538" class="edge-file" />
+<line x1="932" y1="538" x2="992" y2="538" class="edge-file" />
+<rect x="628" y="646" width="304" height="116" class="box-violet" />
+<rect x="836" y="657" width="84" height="20" rx="5" fill="#7c3aed" />
+<text x="878" y="671" text-anchor="middle" class="badge">TRANSFER 4</text>
+<text x="642" y="672" class="box-head">Datei 4 · Überarbeitung (opt. .json)</text>
+<text x="642" y="691" class="box-code">ux-ueberarbeitung-&lt;id&gt;-reviewer_b.json</text>
+<text x="642" y="711" class="box-text">• Überträgt phase=&#x27;revision&#x27;-Einträge</text>
+<text x="642" y="729" class="box-text">• Überschreibt NIEMALS das Ersturteil</text>
+<text x="642" y="747" class="box-text">• Idempotenter Import über decision_uid</text>
+<rect x="48" y="636" width="520" height="246" class="box-emerald" />
+<rect x="416" y="647" width="140" height="20" rx="5" fill="#059669" />
+<text x="486" y="661" text-anchor="middle" class="badge">ABSCHLUSS &amp; EXPORT</text>
+<text x="62" y="662" class="box-head">7. Überarbeitung einlesen, Studienstand wählen &amp; Berichte exportieren</text>
+<text x="62" y="681" class="box-code">adopt_resolution() · html_handout() · markdown_report() · ux-export</text>
+<text x="62" y="701" class="box-text">• Übernimmt ausdrücklich gewählte Fassung (Prüfer 1, Prüfer 2, Konsens,</text>
+<text x="62" y="719" class="box-text">  Ausgangsvorschlag) oder markiert ‚Offene Abweichung‘</text>
+<text x="62" y="737" class="box-text">• A4-HTML &amp; Markdown zeigen gewählten Studienstand + Originalbelege</text>
+<text x="62" y="755" class="box-text">• Forschungs-JSON dokumentiert Ersturteile (BA-Auswertung!), spätere</text>
+<text x="62" y="773" class="box-text">  Überarbeitungen und die übernommene Fassung lückenlos</text>
+<rect x="992" y="636" width="520" height="246" class="box-slate" />
+<rect x="1367" y="647" width="133" height="20" rx="5" fill="#475569" />
+<text x="1434" y="661" text-anchor="middle" class="badge">SAFETY GUARANTEES</text>
+<text x="1006" y="662" class="box-head">Schutzgarantien bei Unterbrechung &amp; Fehlerfällen</text>
+<text x="1006" y="681" class="box-code">SQLite WAL · Transaktionale Paketprüfung</text>
+<text x="1006" y="701" class="box-text">• Neustart zwischen Abgaben: Alle Stände &amp; Belege sofort wieder offen</text>
+<text x="1006" y="719" class="box-text">• Doppelt eingelesene .zip/.json: Erzeugt exakt 0 doppelte Entscheidungen</text>
+<text x="1006" y="737" class="box-text">• Fremder Prüfauftrag (session_id / baseline_sha256 falsch): Abweisung</text>
+<text x="1006" y="755" class="box-text">• Beschädigtes Archiv / manipulierter JSON-Hash: 0 Teiländerungen!</text>
+<text x="1006" y="773" class="box-text">• BA-Auswertung nutzt unverfälschte Ersturteile (reviewer_a/b.initial)</text>
+<path d="M 992 575 L 960 575 L 960 704 L 932 704" class="edge-file" />
+<line x1="628" y1="704" x2="568" y2="704" class="edge-file" />
+</svg>

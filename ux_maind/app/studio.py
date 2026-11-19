@@ -19,8 +19,9 @@ from starlette.responses import FileResponse, HTMLResponse, JSONResponse, Respon
 from starlette.routing import Route, Mount
 from starlette.staticfiles import StaticFiles
 from .workspace import Workspace
-from .office import office_pdf, office_renderer as office_renderer
+from .office import has_cached_office_pdf, office_pdf, office_renderer as office_renderer
 from . import (
+    dual_review,
     interpretation,
     library,
     models,
@@ -92,6 +93,46 @@ def _forbid_reference_documents(workspace, numbers, *, allow_reference=False):
         )
 
 
+def _record_blinded_export_owner(workspace, saved_path: str, scope_docs: list[int] | None = None, session_id: str | None = None) -> None:
+    """Tag saved exports created during an unreleased Dual Review so the other reviewer cannot read them before release."""
+    from . import auth
+
+    sid = session_id
+    if not sid and scope_docs:
+        sessions = dual_review.list_sessions(workspace, scope_docs=scope_docs)
+        unrel = next((s for s in sessions if not s.get("released")), None)
+        if unrel:
+            sid = unrel["session_id"]
+    if not sid:
+        return
+    owners = workspace.setting("export_owners")
+    owners = dict(owners) if isinstance(owners, dict) else {}
+    owners[Path(saved_path).name] = {
+        "session_id": sid,
+        "viewer_id": auth.list_profiles(workspace)["active"]["id"],
+    }
+    workspace.set_setting("export_owners", owners)
+
+
+def _is_export_hidden_for_viewer(workspace, filename: str) -> bool:
+    owners = workspace.setting("export_owners")
+    if not isinstance(owners, dict) or filename not in owners:
+        return False
+    meta = owners[filename]
+    if not isinstance(meta, dict) or not meta.get("session_id"):
+        return False
+    from . import auth
+
+    active_id = auth.list_profiles(workspace)["active"]["id"]
+    if meta.get("viewer_id") == active_id:
+        return False
+    try:
+        sess = dual_review._load_session(workspace, meta["session_id"])
+    except ValueError:
+        return False
+    return not bool(sess.get("released_at"))
+
+
 def save_export(workspace, body):
     kind = body["kind"]
     if kind == "report":
@@ -102,9 +143,11 @@ def save_export(workspace, body):
             result_runs=body.get("result_runs"),
             lang=body.get("lang", "de"),
         )
-        return library.save_export(
+        saved = library.save_export(
             workspace, "ux-study-report.md", report_md.encode("utf-8")
         )
+        _record_blinded_export_owner(workspace, saved, scope_docs=body.get("documents"))
+        return saved
     if kind == "handout":
         handout_doc = telemetry.html_handout(
             workspace,
@@ -114,9 +157,11 @@ def save_export(workspace, body):
             lang=body.get("lang", "de"),
             include_toolbar=True,
         )
-        return library.save_export(
+        saved = library.save_export(
             workspace, "ux-study-handout.html", handout_doc.encode("utf-8")
         )
+        _record_blinded_export_owner(workspace, saved, scope_docs=body.get("documents"))
+        return saved
     if kind == "research":
         name = "ux-research.json"
         value = research.graph(
@@ -126,6 +171,11 @@ def save_export(workspace, body):
             basis=body.get("basis"),
             result_runs=body.get("result_runs"),
         )
+        saved = library.save_export(
+            workspace, name, json.dumps(value, ensure_ascii=False, indent=2).encode()
+        )
+        _record_blinded_export_owner(workspace, saved, scope_docs=body.get("documents"))
+        return saved
     else:
         row = workspace.file(body["document"])
         if kind == "original":
@@ -354,6 +404,22 @@ def application(root, *, terminal_log=False):
                         dict(error="Die Sitzung hat sich geändert. Seite neu laden."),
                         status_code=403,
                     )
+                if action == "dual-review-import":
+                    ct = (request.headers.get("content-type") or "").lower()
+                    if "application/json" in ct:
+                        import base64
+
+                        jbody = await request.json()
+                        raw_bytes = base64.b64decode(jbody.get("data_base64") or "")
+                        fname = str(jbody.get("filename") or q.get("filename") or "")
+                    else:
+                        raw_bytes = await request.body()
+                        fname = str(q.get("filename") or "")
+                    return JSONResponse(
+                        await asyncio.to_thread(
+                            dual_review.import_package, workspace, raw_bytes, fname
+                        )
+                    )
                 body = await request.json()
                 if action == "import":
                     await job(
@@ -516,15 +582,25 @@ def application(root, *, terminal_log=False):
                     return JSONResponse(
                         auth.delete_profile(workspace, str(body.get("id", "")))
                     )
-                elif action == "oidc-authorize":
-                    from . import auth
-
+                elif action == "dual-review-start":
                     return JSONResponse(
-                        await asyncio.to_thread(
-                            auth.build_oidc_authorize_url,
-                            workspace,
-                            str(body.get("redirect_uri", "")),
-                        )
+                        await asyncio.to_thread(dual_review.create_session, workspace, body)
+                    )
+                elif action == "dual-review-decide":
+                    return JSONResponse(
+                        await asyncio.to_thread(dual_review.save_judgment, workspace, body)
+                    )
+                elif action == "dual-review-submit":
+                    return JSONResponse(
+                        await asyncio.to_thread(dual_review.submit_slot, workspace, body)
+                    )
+                elif action == "dual-review-release":
+                    return JSONResponse(
+                        await asyncio.to_thread(dual_review.release_comparison, workspace, body)
+                    )
+                elif action == "dual-review-adopt":
+                    return JSONResponse(
+                        await asyncio.to_thread(dual_review.adopt_resolution, workspace, body)
                     )
                 elif action == "extract":
                     if body.get("send") is not True:
@@ -676,16 +752,68 @@ def application(root, *, terminal_log=False):
                 from . import auth
 
                 return JSONResponse(auth.list_profiles(workspace))
+            if action == "dual-review-sessions":
+                scope_param = q.get("documents")
+                scope_docs = json.loads(scope_param) if scope_param else None
+                return JSONResponse(
+                    dict(sessions=dual_review.list_sessions(workspace, scope_docs=scope_docs))
+                )
+            if action == "dual-review-export":
+                sid = str(q["session_id"])
+                exp_kind = str(q.get("kind") or "assignment")
+                if exp_kind == "assignment":
+                    fname, payload_bytes = await asyncio.to_thread(
+                        dual_review.export_assignment_zip, workspace, sid
+                    )
+                    mtype = "application/zip"
+                elif exp_kind == "submission":
+                    slot_arg = q.get("slot") or None
+                    fname, payload_bytes = await asyncio.to_thread(
+                        dual_review.export_submission_json, workspace, sid, slot=slot_arg
+                    )
+                    mtype = "application/json"
+                elif exp_kind == "comparison":
+                    fname, payload_bytes = await asyncio.to_thread(
+                        dual_review.export_comparison_json, workspace, sid
+                    )
+                    mtype = "application/json"
+                else:
+                    raise ValueError("Unbekannter Zweitprüfungs-Exporttyp")
+                if q.get("save") == "1":
+                    saved_path = library.save_export(workspace, fname, payload_bytes)
+                    if exp_kind == "submission":
+                        _record_blinded_export_owner(workspace, saved_path, session_id=sid)
+                    return JSONResponse(dict(path=saved_path, filename=fname))
+                return Response(
+                    payload_bytes,
+                    media_type=mtype,
+                    headers={
+                        "Content-Disposition": f'attachment; filename="{fname}"',
+                        "X-Content-Type-Options": "nosniff",
+                    },
+                )
             if action == "exports-list":
+                visible_items = [
+                    it
+                    for it in library.list_saved_exports(workspace)
+                    if not _is_export_hidden_for_viewer(workspace, it["filename"])
+                ]
                 return JSONResponse(
                     dict(
                         output=library.paths(workspace)["output"],
-                        items=library.list_saved_exports(workspace),
+                        items=visible_items,
                     )
                 )
             if action == "export-file":
                 dest = library.output_directory(workspace)
                 safe_name = Path(q["name"]).name
+                if _is_export_hidden_for_viewer(workspace, safe_name):
+                    return JSONResponse(
+                        dict(
+                            error="Dieser Export gehört zur noch verblindeten Bewertung einer anderen Person."
+                        ),
+                        status_code=403,
+                    )
                 target = (dest / safe_name).resolve()
                 if (
                     not target.is_relative_to(dest)
@@ -716,7 +844,10 @@ def application(root, *, terminal_log=False):
                     bundles.append(
                         dict(
                             file=f,
-                            summary=dict(workspace.summary(f), office_renderer=has_lo),
+                            summary=dict(
+                                workspace.summary(f),
+                                office_renderer=has_lo or has_cached_office_pdf(workspace, f),
+                            ),
                             runs=workspace.results(doc_id, messages=False, compact=use_compact),
                         )
                     )
@@ -874,7 +1005,10 @@ def application(root, *, terminal_log=False):
             if action == "summary":
                 return JSONResponse(
                     dict(
-                        workspace.summary(row), office_renderer=bool(office_renderer())
+                        workspace.summary(row),
+                        office_renderer=bool(
+                            office_renderer() or has_cached_office_pdf(workspace, row)
+                        ),
                     )
                 )
             if action == "elements":
@@ -1261,9 +1395,7 @@ def main():
     parser.add_argument(
         "--workspace",
         type=Path,
-        default=Path(os.environ.get("LOCALAPPDATA", Path.home() / ".local/share"))
-        / "UX-mAInd"
-        / "workspace-r12",
+        default=library.default_workspace_path(),
     )
     parser.add_argument("--no-browser", action="store_true")
     parser.add_argument("--runtime-info", action="store_true")
@@ -1286,12 +1418,15 @@ def main():
     app = application(args.workspace, terminal_log=not args.quiet)
     if not args.quiet:
         ws = app.state.workspace
+        p_info = library.paths(ws)
         terminal_ui.emit_startup_banner(
             port=args.port,
             workspace_root=ws.root,
-            output_dir=library.paths(ws).get("output") or "(noch nicht gewählt)",
+            output_dir=p_info.get("output") or "(noch nicht gewählt)",
             detected_envs=models.detected_env_vars(),
             workflow_cfg=library.workflow_settings(ws),
+            legacy_workspace=p_info.get("legacy_workspace"),
+            is_default_workspace=bool(p_info.get("is_default_workspace", True)),
             verbose=args.verbose,
             stream=sys.stderr,
         )
@@ -1304,3 +1439,7 @@ def main():
         access_log=args.verbose,
         log_level="info" if args.verbose else "warning",
     )
+
+
+if __name__ == "__main__":
+    main()

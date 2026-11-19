@@ -134,26 +134,30 @@ export function App() {
     loadFiles();
   }, [loadFiles]);
 
-  // Load settings & profiles
+  // Load settings, workspace paths & researcher profiles
+  const [pathsInfo, setPathsInfo] = useState(null);
   const [researcherState, setResearcherState] = useState({
-    active: { id: "default", display_name: "Standard-Prüfer", role: "UX-Forscher" },
+    active: { id: "default", display_name: "Standard-Prüfer", short_code: "SP", role: "UX-Forscher" },
     profiles: [],
-    oidc: { enabled: false },
+    identity_mode: "local",
   });
   const [reviewerModalOpen, setReviewerModalOpen] = useState(false);
   const [newReviewerName, setNewReviewerName] = useState("");
+  const [newReviewerCode, setNewReviewerCode] = useState("");
   const [newReviewerRole, setNewReviewerRole] = useState("UX-Forscher");
 
   const loadSettings = useCallback(async () => {
     try {
-      const [prof, wf, rev] = await Promise.all([
+      const [prof, wf, rev, pInfo] = await Promise.all([
         api("profiles"),
         api("workflow-settings"),
         api("researchers").catch(() => null),
+        api("paths").catch(() => null),
       ]);
       setProfilesData(prof);
       setWorkflowSettings(wf);
       if (rev?.active) setResearcherState(rev);
+      if (pInfo) setPathsInfo(pInfo);
     } catch (err) {
       toast.error(err.message);
     }
@@ -514,6 +518,31 @@ export function App() {
               <span className="lx-muted lx-text-xs truncate" title={activeStageAModel}>
                 {activeStageAModel}
               </span>
+              {pathsInfo?.workspace && (
+                <button
+                  type="button"
+                  data-testid="sidebar-workspace-path"
+                  className="lx-muted lx-text-xs truncate"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: "4px 0 0",
+                    marginTop: 4,
+                    borderTop: "1px solid var(--border-subtle)",
+                    textAlign: "left",
+                    cursor: "pointer",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 10.5,
+                  }}
+                  title={`${t("Geöffneter Arbeitsordner", "Active Workspace")}: ${pathsInfo.workspace}`}
+                  onClick={() => {
+                    setSettingsRequestedTab("paths");
+                    setScreen("settings");
+                  }}
+                >
+                  📁 {pathsInfo.workspace}
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -675,9 +704,22 @@ export function App() {
               onClearSelection={() => setSelectedIds(new Set())}
               onOpenDocument={handleOpenDocument}
               onNavigate={setScreen}
+              pathsInfo={pathsInfo}
               onRefreshFiles={async () => {
                 await loadFiles();
+                await loadSettings();
                 await pollStatus();
+              }}
+              onDualPackageImported={async (importRes) => {
+                await loadSettings();
+                await loadFiles();
+                if (Array.isArray(importRes?.imported_documents) && importRes.imported_documents.length) {
+                  didAutoSelectRef.current = true;
+                  setSelectedIds(new Set(importRes.imported_documents));
+                }
+                await loadWorkspace();
+                setSynthesisTab("findings");
+                setScreen("results");
               }}
               importModalOpen={importModalOpen}
               onImportModalChange={setImportModalOpen}
@@ -758,6 +800,33 @@ export function App() {
                 setSynthesisTab(stage === "C" ? "findings" : "relations");
               }}
               onRefreshWorkspace={loadWorkspace}
+              researcherState={researcherState}
+              onSwitchReviewerProfile={async (profileId) => {
+                try {
+                  const next = await api("researcher-select", { id: profileId });
+                  setResearcherState(next);
+                  await loadWorkspace();
+                  toast.success(
+                    `${t("Aktives Prüfer-Profil", "Active Reviewer")}: ${next?.active?.display_name || profileId}`
+                  );
+                } catch (err) {
+                  toast.error(err.message);
+                }
+              }}
+              onRefreshAll={async () => {
+                await loadSettings();
+                await loadFiles();
+                await loadWorkspace();
+              }}
+              onDualPackageImported={async (importRes) => {
+                await loadSettings();
+                await loadFiles();
+                if (Array.isArray(importRes?.imported_documents) && importRes.imported_documents.length) {
+                  didAutoSelectRef.current = true;
+                  setSelectedIds(new Set(importRes.imported_documents));
+                }
+                await loadWorkspace();
+              }}
               onShowSource={handleShowSource}
               onFocusInGraph={(kind, target) => {
                 setGraphFocusRequest({ kind, target });
@@ -866,6 +935,7 @@ export function App() {
                     <div className="lx-row-gap min-w-0">
                       <StatusDot tone={isAct ? "success" : "neutral"} />
                       <strong className="lx-text-xs truncate">{p.display_name}</strong>
+                      {p.short_code && <span className="lx-mono-tag">{p.short_code}</span>}
                       {p.role && <span className="lx-muted lx-text-xs">· {p.role}</span>}
                     </div>
                     <button
@@ -876,6 +946,7 @@ export function App() {
                         try {
                           const next = await api("researcher-select", { id: p.id });
                           setResearcherState(next);
+                          await loadWorkspace();
                           toast.success(`${t("Aktiver Prüfer", "Active reviewer")}: ${p.display_name}`);
                         } catch (err) {
                           toast.error(err.message);
@@ -892,33 +963,45 @@ export function App() {
 
           <div className="lx-grid-2">
             <label className="lx-field">
-              <span className="lx-field-label">{t("Neues Prüfer-Profil", "New Reviewer Name")}</span>
+              <span className="lx-field-label">
+                {t("Anzeigename oder Kürzel", "Display Name or Code")}
+              </span>
               <input
                 type="text"
                 className="lx-input lx-input-sm"
-                placeholder={t("z. B. Chris oder Zweitprüfer B …", "e.g. Chris or Co-Coder B…")}
+                placeholder={t("z. B. Chris oder Zweitprüfer B …", "e.g. Chris or Reviewer B…")}
                 value={newReviewerName}
                 onChange={(e) => setNewReviewerName(e.target.value)}
               />
             </label>
-            <label className="lx-field">
-              <span className="lx-field-label">{t("Rolle", "Role")}</span>
-              <input
-                type="text"
-                className="lx-input lx-input-sm"
-                value={newReviewerRole}
-                onChange={(e) => setNewReviewerRole(e.target.value)}
-              />
-            </label>
+            <div className="lx-grid-2">
+              <label className="lx-field">
+                <span className="lx-field-label">{t("Kürzel (opt.)", "Short Code")}</span>
+                <input
+                  type="text"
+                  className="lx-input lx-input-sm"
+                  placeholder="CU"
+                  value={newReviewerCode}
+                  onChange={(e) => setNewReviewerCode(e.target.value)}
+                />
+              </label>
+              <label className="lx-field">
+                <span className="lx-field-label">{t("Rolle", "Role")}</span>
+                <input
+                  type="text"
+                  className="lx-input lx-input-sm"
+                  value={newReviewerRole}
+                  onChange={(e) => setNewReviewerRole(e.target.value)}
+                />
+              </label>
+            </div>
           </div>
           <div className="lx-between">
             <span className="lx-muted lx-text-xs">
-              {researcherState?.oidc?.enabled
-                ? `${t("Optionales OIDC aktiv", "Optional OIDC enabled")}: ${researcherState.oidc.provider_label}`
-                : t(
-                    "Lokaler Offline-Modus aktiv (optionales OIDC/Google-OAuth über UX_MAIND_OIDC_CLIENT_ID konfigurierbar).",
-                    "Local offline mode active (optional OIDC/Google OAuth available via UX_MAIND_OIDC_CLIENT_ID)."
-                  )}
+              {t(
+                "100 % lokal ohne Cloud-Dienst oder Anmeldung · Erweiterungspunkt: ReviewerIdentityProvider",
+                "100% local offline without cloud login wall · Extension hook: ReviewerIdentityProvider"
+              )}
             </span>
             <button
               type="button"
@@ -928,10 +1011,13 @@ export function App() {
                 try {
                   const next = await api("researcher-save", {
                     display_name: newReviewerName.trim(),
+                    short_code: newReviewerCode.trim(),
                     role: newReviewerRole.trim() || "UX-Forscher",
                   });
                   setResearcherState(next);
                   setNewReviewerName("");
+                  setNewReviewerCode("");
+                  await loadWorkspace();
                   toast.success(t("Prüfer-Profil gespeichert & aktiviert", "Reviewer profile saved & activated"));
                 } catch (err) {
                   toast.error(err.message);

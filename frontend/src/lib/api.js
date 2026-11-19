@@ -36,6 +36,27 @@ export async function api(path, body = undefined, options = {}) {
   return payload;
 }
 
+export async function apiUploadBinary(path, fileOrBytes) {
+  const resp = await fetch(`/api/${path}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/octet-stream",
+      "X-Workspace-Token": getWorkspaceToken(),
+    },
+    body: fileOrBytes,
+  });
+  const ct = resp.headers.get("content-type") || "";
+  const payload = ct.includes("application/json") ? await resp.json() : await resp.text();
+  if (!resp.ok) {
+    const msg =
+      (payload && typeof payload === "object" && payload.error) ||
+      (typeof payload === "string" && payload) ||
+      `HTTP ${resp.status}`;
+    throw new Error(msg);
+  }
+  return payload;
+}
+
 export async function fetchObservationEntry(ref) {
   const params = new URLSearchParams({
     documents: JSON.stringify([ref.document]),

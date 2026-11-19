@@ -626,7 +626,11 @@ def html_handout(
         rev_lbl, rev_fg = review_map.get(
             f.get("review", "UNREVIEWED"), (f.get("review") or "UNREVIEWED", "#52525b")
         )
-        human_decs = [d for d in f.get("decisions") or [] if d.get("origin") == "human"]
+        human_decs = [
+            d
+            for d in f.get("decisions") or []
+            if d.get("origin") in ("human", "dual_review", "dual_review_adopted")
+        ]
 
         quotes_html = []
         for role_key, role_tag in (
@@ -656,13 +660,55 @@ def html_handout(
                 )
 
         notes_html = ""
+        dr = f.get("dual_review") or {}
+        if dr.get("released"):
+            res_state = dr.get("resolution_state")
+            if res_state == "OPEN_DISAGREEMENT":
+                dis_lbl = (
+                    "Dual Review — Open Disagreement"
+                    if en
+                    else "Zweitprüfung — Offene Abweichung"
+                )
+                dis_msg = (
+                    "Reviewer 1 and Reviewer 2 recorded differing judgments; divergence remains explicitly open."
+                    if en
+                    else "Prüfer 1 und Prüfer 2 haben abweichend geurteilt; die Abweichung bleibt sichtbar offen."
+                )
+                notes_html += (
+                    f'<div class="review-note" style="background:#fffbeb;border-left-color:#d97706;color:#92400e">'
+                    f"<strong>⚠ {dis_lbl}:</strong> {escape(dis_msg)}</div>"
+                )
+            elif res_state == "ADOPTED":
+                ad_lbl = (
+                    "Dual Review — Adopted Study State"
+                    if en
+                    else "Zweitprüfung — Übernommener Studienstand"
+                )
+                ad_src = escape(str((dr.get("resolution") or {}).get("adopted_from") or "-"))
+                ad_rsn = escape(str((dr.get("resolution") or {}).get("reason") or ""))
+                notes_html += (
+                    f'<div class="review-note" style="background:#ecfdf5;border-left-color:#059669;color:#065f46">'
+                    f"<strong>✓ {ad_lbl} ({ad_src}):</strong> {ad_rsn}</div>"
+                )
+            elif res_state == "PENDING_ADOPTION":
+                pa_lbl = (
+                    "Dual Review — Comparison Released (Adoption Pending)"
+                    if en
+                    else "Zweitprüfung — Vergleich freigegeben (Übernahme noch offen)"
+                )
+                notes_html += (
+                    f'<div class="review-note">'
+                    f"<strong>{pa_lbl}</strong></div>"
+                )
         if human_decs:
             latest = human_decs[-1]
             fallback_note = "Reviewed without extra note" if en else "Geprüft ohne Zusatznotiz"
             note_lbl = "Researcher Review" if en else "Forscher-Prüfentscheidung"
-            notes_html = (
+            rev_who = ((latest.get("payload") or {}).get("reviewer") or {}).get("name")
+            who_suffix = f" · {escape(str(rev_who))}" if rev_who else ""
+            notes_html += (
                 f'<div class="review-note"><strong>'
-                f'{note_lbl} ({escape(latest.get("action", ""))}):</strong> '
+                f'{note_lbl} ({escape(latest.get("action", ""))}{who_suffix}):</strong> '
                 f'{escape(latest.get("reason") or fallback_note)}</div>'
             )
 
@@ -757,7 +803,11 @@ def html_handout(
         rej_items = []
         for rf in rejected_findings:
             rp = rf.get("effective") or {}
-            decs = [d for d in rf.get("decisions") or [] if d.get("origin") == "human"]
+            decs = [
+                d
+                for d in rf.get("decisions") or []
+                if d.get("origin") in ("human", "dual_review", "dual_review_adopted")
+            ]
             r_note = (
                 decs[-1].get("reason")
                 if decs and decs[-1].get("reason")

@@ -1,9 +1,10 @@
-"""Generate 6 crisp, infinitely zoomable vector .svg architecture diagrams for UX-mAInd R30 (`US-63`)."""
+"""Generate 8 crisp, infinitely zoomable vector .svg architecture & dual-review diagrams for UX-mAInd Studio."""
 
 from __future__ import annotations
 
 from html import escape
 from pathlib import Path
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent.parent
 DIAG_DIR = ROOT / "docs" / "diagrams"
@@ -22,6 +23,7 @@ STYLE_DEFS = """
       .box-amber { fill: #fffbeb; stroke: #d97706; stroke-width: 1.8; rx: 10; ry: 10; }
       .box-emerald { fill: #ecfdf5; stroke: #059669; stroke-width: 1.8; rx: 10; ry: 10; }
       .box-rose { fill: #fff1f2; stroke: #e11d48; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-violet { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.9; rx: 10; ry: 10; }
       .box-slate { fill: #f1f5f9; stroke: #64748b; stroke-width: 1.6; rx: 10; ry: 10; }
       .lane { fill: #f1f5f9; stroke: #cbd5e1; stroke-width: 1.2; stroke-dasharray: 5 4; rx: 14; ry: 14; }
       .box-head { font: 700 13.5px 'Segoe UI', Inter, system-ui, sans-serif; fill: #0f172a; }
@@ -31,7 +33,11 @@ STYLE_DEFS = """
       .edge { stroke: #475569; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
       .edge-teal { stroke: #0d9488; stroke-width: 2.0; fill: none; marker-end: url(#arrow-teal); }
       .edge-amber { stroke: #d97706; stroke-width: 1.9; stroke-dasharray: 6 4; fill: none; marker-end: url(#arrow-amber); }
+      .edge-ext { stroke: #0284c7; stroke-width: 2.1; stroke-dasharray: 8 4; fill: none; marker-end: url(#arrow-sky); }
+      .edge-file { stroke: #7c3aed; stroke-width: 2.4; stroke-dasharray: 3 3; fill: none; marker-end: url(#arrow-violet); }
       .edge-label { font: 600 11px 'Segoe UI', Inter, system-ui, sans-serif; fill: #334155; }
+      .legend-box { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.2; rx: 8; ry: 8; }
+      .legend-txt { font: 600 11px 'Segoe UI', Inter, system-ui, sans-serif; fill: #1e293b; }
     </style>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
@@ -42,8 +48,28 @@ STYLE_DEFS = """
     <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M 0 1 L 10 5 L 0 9 z" fill="#d97706" />
     </marker>
+    <marker id="arrow-sky" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284c7" />
+    </marker>
+    <marker id="arrow-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#7c3aed" />
+    </marker>
   </defs>
 """
+
+
+def legend_strip(x: int, y: int, w: int = 830) -> str:
+    return "\n".join(
+        [
+            f'<rect x="{x}" y="{y}" width="{w}" height="48" class="legend-box" />',
+            f'<line x1="{x + 16}" y1="{y + 24}" x2="{x + 62}" y2="{y + 24}" class="edge-teal" />',
+            f'<text x="{x + 70}" y="{y + 28}" class="legend-txt">Lokaler In-App-Fluss (SQLite / 127.0.0.1)</text>',
+            f'<line x1="{x + 318}" y1="{y + 24}" x2="{x + 364}" y2="{y + 24}" class="edge-ext" />',
+            f'<text x="{x + 372}" y="{y + 28}" class="legend-txt">Opt. externer Modellaufruf (oder lokal Ollama)</text>',
+            f'<line x1="{x + 640}" y1="{y + 24}" x2="{x + 686}" y2="{y + 24}" class="edge-file" />',
+            f'<text x="{x + 694}" y="{y + 28}" class="legend-txt">Lokaler Dateitransfer</text>',
+        ]
+    )
 
 
 def card(
@@ -107,255 +133,319 @@ def wrap_svg(w: int, h: int, heading: str, subheading: str, body: list[str]) -> 
 
 def build_01_master() -> str:
     b = [
+        legend_strip(1006, 20, 830),
         # Lanes
-        '<rect x="24" y="86" width="1752" height="225" class="lane" />',
-        '<text x="42" y="110" class="lane-title">EBENE 1 · LOKALE ERSCHLIESSUNG &amp; OPT. VISION-ANREICHERUNG (KEIN EXTERNER TEXTABFLUSS IN STUFE 01)</text>',
-        '<rect x="24" y="330" width="1752" height="260" class="lane" />',
-        '<text x="42" y="354" class="lane-title">EBENE 2 · STUFE A: DOKUMENTGEBUNDENE EVIDENZEXTRAKTION &amp; DETERMINISTISCHES RE-GROUNDING</text>',
-        '<rect x="24" y="608" width="1752" height="240" class="lane" />',
-        '<text x="42" y="632" class="lane-title">EBENE 3 · STUFEN B &amp; C: DOKUMENTÜBERGREIFENDE TRIANGULATION, EPISTEMIK &amp; PERSISTENZ</text>',
-        '<rect x="24" y="866" width="1752" height="230" class="lane" />',
-        '<text x="42" y="890" class="lane-title">EBENE 4 · FORSCHUNGSOBERFLÄCHE (REACT 19 STUDIO), DUAL-VIEW-INSPEKTOR &amp; A4-ÜBERGABE</text>',
+        '<rect x="24" y="86" width="1812" height="225" class="lane" />',
+        '<text x="42" y="110" class="lane-title">EBENE 1 · ARBEITSORDNER, DOKUMENTIMPORT, LOKALE DOCLING-STRUKTUR &amp; OPTIONALE VISION-ANREICHERUNG</text>',
+        '<rect x="24" y="328" width="1812" height="252" class="lane" />',
+        '<text x="42" y="352" class="lane-title">EBENE 2 · STUFE A: MODELLAUFRUF (LOKAL ODER OPT. EXTERN) &amp; 7-STUFIGE DETERMINISTISCHE QUELLENRÜCKBINDUNG</text>',
+        '<rect x="24" y="598" width="1812" height="236" class="lane" />',
+        '<text x="42" y="622" class="lane-title">EBENE 3 · STUFEN B &amp; C: TRIANGULATION, EPISTEMIK &amp; PERSISTENTE SPEICHERUNG (SQLITE WAL)</text>',
+        '<rect x="24" y="852" width="1812" height="228" class="lane" />',
+        '<text x="42" y="876" class="lane-title">EBENE 4 · SYNCHRONER DUAL-VIEW-QUELLENINSPEKTOR, WISSENSGRAPH &amp; EINZELPRÜFUNG</text>',
+        '<rect x="24" y="1098" width="1812" height="260" class="lane" />',
+        '<text x="42" y="1122" class="lane-title">EBENE 5 · OPTIONALE UNABHÄNGIGE ZWEITPRÜFUNG (1 RECHNER &amp; 2 RECHNER), STUDIENSTAND-ÜBERNAHME &amp; EXPORTE</text>',
         # Row 1
         card(
-            42, 126, 360, 165,
-            "Heterogener Studienkorpus",
-            "workspace.import_paths() · SHA-256",
+            42, 126, 380, 165,
+            "Arbeitsordner & Studienkorpus-Import",
+            "%LOCALAPPDATA%\\UX-mAInd\\workspace · --workspace",
             [
-                "• PDF, DOCX, PPTX, ODT, XLSX, CSV",
-                "• WebVTT, Markdown, HTML, TXT, PNG/JPG",
-                "• Frei gewählter Ordner ohne Pflicht-Whitelist",
-                "• Unveränderte Kopie in work/stored/",
+                "• PDF, DOCX, PPTX, ODT, XLSX, CSV, VTT, MD, TXT",
+                "• Erkennt workspace-r12 (Übernahme per Kopie)",
+                "• --workspace Vorrang für isolierte Tests/Dev",
+                "• Unveränderte Originale per SHA-256 (stored/)",
             ],
             "box-slate",
             ("INPUT", "#475569"),
         ),
         card(
-            452, 126, 420, 165,
+            468, 126, 420, 165,
             "Stufe 01 · Lokale Docling-Struktur",
             "DocumentConverter · PdfPipelineOptions · office.py",
             [
                 "• Layout, TableFormer (FAST/ACCURATE), RapidOCR",
                 "• PPTX/DOCX Durchstreichungen & Vortragsnotizen",
-                "• LibreOffice Ganzfolien-Render (slide_context)",
-                "• Basis-DoclingDocument JSON (work/native/)",
+                "• Opt. LibreOffice Anzeige-PDF & Ganzfolien (display/)",
+                "• Basis-DoclingDocument JSON (native/document.json)",
             ],
             "box-teal",
-            ("LOKAL", "#0d9488"),
+            ("100% LOKAL", "#0d9488"),
         ),
         card(
-            922, 126, 410, 165,
+            934, 126, 420, 165,
             "Stufe 02 · Visuelle Analyse (Optional)",
             "enrichment.py · PictureDescriptionApiOptions",
             [
-                "• Explizite Pixel-Freigabe (send_pixels=True)",
-                "• VLM-Bildbeschreibung & Chart-Tabellenextraktion",
-                "• Editierbarer Basis-Prompt + Zusatzhinweise",
-                "• Neue versionierte DoclingDocument-Fassung",
+                "• Explizite Freigabe (send_pixels=True erforderlich)",
+                "• VLM-Bildbeschreibung & Chart2CSV-Extraktion",
+                "• Lokal (Ollama) oder opt. externes VLM-Gateway",
+                "• Eigene SHA-256-Version unter native/enrichment/",
             ],
             "box-sky",
-            ("VISION", "#0284c7"),
+            ("OPT. VISION", "#0284c7"),
         ),
         card(
-            1382, 126, 372, 165,
-            "Dynamischer Modellkatalog & Profile",
-            "models.py · LiteLLM · /v1/models · Vision-Probe",
+            1400, 126, 416, 165,
+            "Modellzugang & LiteLLM-Gateway (Optional extern)",
+            "models.py · LiteLLM · Lokal (Ollama) / NHR@FAU / API",
             [
-                "• FAU NHR, Ollama, Gemini, OpenRouter, Custom",
-                "• Multimodal-Erkennung (z.B. Qwen3.6-35B-A3B)",
-                "• Live 1×1 PNG Vision-Probe & echte Tarife",
-                "• 0,00 € für FAU/Lokal · null ohne Schätzpreis",
+                "• 100 % lokal (Ollama/vLLM) ODER opt. HTTPS-API",
+                "• Getrennte Anzeige: Hardware / Planung / Wire",
+                "• 0,00 € FAU & Lokal · echte Tarife ohne Schätzung",
+                "• Zweitprüfung auf Rechner 2 benötigt 0 Modellaufrufe!",
             ],
-            "box",
-            ("CONFIG", "#334155"),
+            "box-sky",
+            ("OPT. LLM", "#0284c7"),
         ),
-        arrow(402, 208, 452, 208, "Original"),
-        arrow(872, 208, 922, 208, "Bilder/Folien", "edge-teal"),
+        arrow(422, 208, 468, 208, "Original"),
+        arrow(888, 208, 934, 208, "Bilder/Folien", "edge-teal"),
+        arrow(1354, 208, 1400, 208, "Opt. VLM-Call", "edge-ext"),
         # Row 2
         card(
-            42, 372, 390, 196,
+            42, 368, 390, 192,
             "Modell-Quellaufbereitung (Stufe A)",
             "evidence.model_source() · DocLang / Markdown",
             [
                 "• Temporäre Tabellen-Captions [source_ref=#/tables/i]",
-                "• Spaltenköpfe + Worksheet-Kontext sichtbar",
-                "• GRADING_SCALE & FormItems verlustfrei",
+                "• Spaltenköpfe + Worksheet-Kontext + TrackSource",
+                "• GRADING_SCALE, KeyValueItem & FormItem sichtbar",
                 "• Original-DoclingDocument bleibt unberührt",
             ],
             "box-teal",
             ("PREP", "#0d9488"),
         ),
         card(
-            482, 372, 410, 196,
+            482, 368, 420, 192,
             "Stufe A · Evidenzextraktion (Docling-Graph)",
             "native_graph.py · UXEvidenceDocument",
             [
-                "• Feldtexte <= 240 Zeichen (0 Schema-Trunkierung)",
-                "• httpx.Timeout + Stream-Idle-Watchdog + Live-Konsole",
-                "• Extrahiert Zitate, Messwerte, Skalenpolung, Kontext",
-                "• Erkennt SCHEMA_SALVAGED & reasoning_tokens",
+                "• Schema-Regeln <= 240 Zeichen (0 Trunkierung)",
+                "• httpx.Timeout + Stream-Idle-Watchdog + Live-Log",
+                "• Lokal (Ollama) oder opt. externer Modellaufruf",
+                "• Zitate, Messwerte, Skalenpolung & Sprecherrolle",
             ],
-            "box-teal",
-            ("STUFE A", "#0d9488"),
+            "box-sky",
+            ("STUFE A", "#0284c7"),
         ),
         card(
-            942, 372, 410, 196,
-            "Deterministisches Re-Grounding",
+            952, 368, 420, 192,
+            "7-Stufige Deterministische Quellenrückbindung",
             "evidence.Sources.locate() · observation_view()",
             [
-                "• 1. Exakter Span · 2. Ligaturen (ﬁ/ﬂ) & Trennstriche",
-                "• 3. Wortgrenzen ('5%' matcht niemals in '15%')",
-                "• 4. Verbundene Tabellenzellen & Zitatlisten („...“)",
-                "• Kandidaten-Anker + ambiguous_count bei Mehrdeutigkeit",
+                "• Exakter Span, PDF-Ligaturen (ﬁ/ﬂ) & Silbentrennung",
+                "• Wortgrenzen ('5%' != '15%') & Tabellenzellen",
+                "• Generiert deterministische evidence_id pro Anker",
+                "• Mehrdeutige Treffer bleiben offen (candidate_anchors)",
             ],
             "box-emerald",
-            ("VERIFY", "#059669"),
+            ("RE-GROUND", "#059669"),
         ),
         card(
-            1402, 372, 352, 196,
-            "Stufe-A-Gatekeeper & Heilung",
+            1422, 368, 394, 192,
+            "Stufe-A-Gatekeeper & Belegheilung",
             "a_status.dimensions() · exclusion_reasons",
             [
-                "• Trennt zitierbare vs. ausgeschlossene Belege",
-                "• Transparente Ausschlussgründe im Popover",
+                "• Trennt zitierbare (SOURCE_RESOLVED) vs. offene Belege",
                 "• 1-Klick Kandidaten-Heilung durch Forscher",
+                "• Codebook-Schutz (corpus_role='reference')",
                 "• Carry-Forward bestätigter Entscheidungen",
             ],
             "box-amber",
             ("GATE", "#d97706"),
         ),
-        path_arrow("M 662 291 L 662 315 L 237 315 L 237 372", "DoclingDocument", 450, 311, "edge-teal"),
-        path_arrow("M 1127 291 L 1127 315 L 237 315 L 237 372", "", 0, 0, "edge-teal"),
-        arrow(432, 470, 482, 470, "DocLang/MD"),
-        arrow(892, 470, 942, 470, "Roh-JSON"),
-        arrow(1352, 470, 1402, 470, "SOURCE_RESOLVED", "edge-teal"),
+        path_arrow("M 678 291 L 678 314 L 237 314 L 237 368", "DoclingDocument", 460, 310, "edge-teal"),
+        path_arrow("M 1608 291 L 1608 344 L 692 344 L 692 368", "Opt. LLM-API / Ollama", 1150, 340, "edge-ext"),
+        arrow(432, 464, 482, 464, "DocLang/MD", "edge-teal"),
+        arrow(902, 464, 952, 464, "Roh-JSON"),
+        arrow(1372, 464, 1422, 464, "SOURCE_RESOLVED", "edge-teal"),
         # Row 3
         card(
-            42, 648, 400, 180,
+            42, 638, 400, 178,
             "Reiner JSON-Synthese-Handoff",
             "interpretation._build_synthesis_document()",
             [
-                "• Reine Daten in evidence.json (ohne Prompt-Mischung)",
+                "• Reine Daten in evidence.json (0 Prompt-Mischung)",
                 "• Sprach-/Zusatzregeln strikt in system_appendix",
                 "• Übergibt numeric_value, scale_direction, outline,",
-                "  track, strikethrough_spans & Mehrzeilen-Tabellen",
+                "  track, strikethrough_spans & Tabellenkontext",
             ],
             "box-amber",
             ("HANDOFF", "#d97706"),
         ),
         card(
-            492, 648, 390, 180,
-            "Stufe B · Dokumentübergreifende Relationen",
-            "UXRelationProposals · structured_sparse_check=False",
+            492, 638, 400, 178,
+            "Stufe B · Relationen & Stufe C · UX-Findings",
+            "UXRelationProposals · UXFindingProposals",
             [
-                "• Verbindet Beobachtungen über Dateien hinweg",
-                "• corroborates, contradicts, elaborates, causes",
-                "• Unterscheidet dokumentintern vs. -übergreifend",
-                "• Eigener nativer Laufbeleg in SQLite",
+                "• B: corroborates, contradicts, elaborates, causes",
+                "• C: Findings inkl. Gegenbelege & Nielsen/ISO/WCAG",
+                "• Epistemik: Sprecherzahl & Folien-Überlappung",
+                "• Lokal (Ollama) oder opt. externer Modellaufruf",
             ],
-            "box-amber",
-            ("STUFE B", "#d97706"),
+            "box-sky",
+            ("B & C", "#0284c7"),
         ),
         card(
-            932, 648, 410, 180,
-            "Stufe C · UX-Findings & Epistemik",
-            "UXFindingProposals · research._finding_epistemics()",
+            942, 638, 430, 178,
+            "SQLite WAL Speicherung & Prüfer-Profile",
+            "workspace.sqlite · auth.py (ReviewerIdentityProvider)",
             [
-                "• Supports, Opposes, Qualifies + Nielsen/ISO-Heuristik",
-                "• Prüft alle 4 Rollenlisten & verworfene Stützbelege",
-                "• Dedupliziert Folienrender-Überlappung + Sprecherzahl",
-                "• Unabhängigkeitsmaße pro Finding",
-            ],
-            "box-emerald",
-            ("STUFE C", "#059669"),
-        ),
-        card(
-            1392, 648, 362, 180,
-            "SQLite WAL Workspace & Audit-Ledger",
-            "workspace.db · files / runs / ux_objects / ux_decisions",
-            [
-                "• KI-Rohvorschläge niemals überschrieben",
-                "• Forscher-Review: confirmed, corrected, rejected",
-                "• Rekonstruiert kompletten Job-Verlauf aus SQLite",
-                "• Revisionssichere Basis- & Lauf-Versionierung",
+                "• Tabellen: documents, runs, ux_objects, ux_decisions,",
+                "  ux_review_sessions, workspace_settings, profiles",
+                "• Lokale Profile (Name/Kürzel, 0 Cloud-/Login-Zwang)",
+                "• Architektur-Hook: ReviewerIdentityProvider (SSO/OIDC)",
             ],
             "box-slate",
             ("SQLITE WAL", "#475569"),
         ),
-        path_arrow("M 1578 568 L 1578 594 L 242 594 L 242 648", "Nur verankerte A-Basis", 910, 590, "edge-teal"),
-        arrow(442, 738, 492, 738, "evidence.json"),
-        arrow(882, 738, 932, 738, "A + Relationen B"),
-        arrow(1342, 738, 1392, 738, "Persistenz"),
+        card(
+            1422, 638, 394, 178,
+            "Neustartfester Zustand & Lauf-Rekonstruktion",
+            "library.paths() · terminal_ui.read_job_history()",
+            [
+                "• Alle Dokumentversionen, Belege, Ersturteile und",
+                "  Zwischenstände überleben jeden Neustart verlustfrei",
+                "• Zeigt geöffneten Arbeitsordner live in der UI an",
+                "• Rekonstruiert kompletten Job-Verlauf aus SQLite",
+            ],
+            "box-teal",
+            ("PERSISTENT", "#0d9488"),
+        ),
+        path_arrow("M 1619 560 L 1619 586 L 242 586 L 242 638", "Verankerte A-Basis", 930, 582, "edge-teal"),
+        arrow(442, 727, 492, 727, "evidence.json", "edge-ext"),
+        arrow(892, 727, 942, 727, "Laufbelege", "edge-teal"),
+        arrow(1372, 727, 1422, 727, "WAL Sync", "edge-teal"),
         # Row 4
         card(
-            42, 908, 400, 168,
-            "Synthese-Workbench & Modell-Telemetrie",
-            "SynthesisView · StudyAnalyticsView · telemetry.py",
+            42, 892, 430, 170,
+            "Synthese-Werkbank & Direkte Einzelprüfung",
+            "SynthesisView.jsx · ResearcherReviewBlock",
             [
-                "• Master-Detail-Prüfung mit Korrekturleitfaden",
-                "• Triangulations-Matrix (ohne verworfene Vorschläge)",
-                "• Modell-Evaluationsmatrix (Ertrag, Anker-%, Tokens)",
-                "• CSV-Export für Kapitel Evaluation der BA",
+                "• Normale Einzelprüfung direkt mit Standard-Prüfer",
+                "  (zweites Profil bleibt 100 % freiwillig!)",
+                "• Bestätigen, Korrigieren, Verwerfen + Prüfnotiz",
+                "• Zustandsfeste Such- & Prüfstatusfilter",
             ],
             "box",
-            ("VIEW 3", "#0f766e"),
+            ("EINZELPRÜFUNG", "#0f766e"),
         ),
         card(
-            492, 908, 410, 168,
-            "Interaktiver Evidenz- & Wissensgraph",
-            "GraphView (@xyflow/react + Dagre) · MiniMap",
-            [
-                "• Modi: Findings-Ketten, Gesamtnetz, Gegenbelege, Visuell",
-                "• Dokumentquellen- & Bildquellen-Hubs für alle Formate",
-                "• Freies Drag & Drop + farbige MiniMap ab 1 Knoten",
-                "• Fehlerhafte KI-Kanten per Klick ‚Verbindung lösen‘",
-            ],
-            "box",
-            ("VIEW 4", "#0284c7"),
-        ),
-        card(
-            952, 908, 410, 168,
+            522, 892, 430, 170,
             "Synchroner Dual-View-Quelleninspektor",
-            "InspectorView · PDF.js + DoclingReader + docling-img",
+            "InspectorView.jsx · PDF.js + DoclingReader + docling-img",
             [
-                "• Aktive Finding-Belegleiste zum Durchklicken aller Zitate",
-                "• Rückkopplungsfreie PDF/PPTX-Seitensynchronisation",
-                "• Volle Tabellen, Streichungen, Notizen & SVG-Boxen",
-                "• Protokollierter Modell-Input & .MD / JSON Export",
+                "• Links Original-PDF / gecachtes Office-Anzeige-PDF",
+                "• Rechts Docling-Lesefassung & native BBox-Geometrie",
+                "• Klickbare Finding-Belegleiste über alle Dokumente",
+                "• Funktioniert identisch aus lokalem .zip-Prüfpaket!",
             ],
-            "box",
-            ("VIEW 5", "#059669"),
+            "box-teal",
+            ("DUAL-VIEW", "#0d9488"),
         ),
         card(
-            1412, 908, 342, 168,
-            "Druckbares A4-Handout & Handbuch",
-            "html_handout() · USER_MANUAL.md · SYSTEM_LIMITS.md",
+            1002, 892, 400, 170,
+            "Interaktiver Evidenz- & Wissensgraph",
+            "GraphView.jsx (@xyflow/react + Dagre) · MiniMap",
             [
-                "• Druckfertiges A4-Übergabedokument (Strg+P / PDF)",
-                "• Zeigt bestätigte/korrigierte Findings + Zitatbelege",
-                "• Verworfene KI-Vorschläge sauber abgetrennt",
-                "• In-App Handbuch & ehrliche Systemgrenzen",
+                "• Findings-Ketten, Gesamtnetz, Gegenbelege, Visuell",
+                "• Respektiert Verblindung während aktiver Zweitprüfung",
+                "• Freies Ziehen + 1-Klick ‚Verbindung lösen‘",
+                "• Nahtloser Sprung in die Dual-View-Fundstelle",
+            ],
+            "box",
+            ("GRAPH", "#0284c7"),
+        ),
+        card(
+            1452, 892, 364, 170,
+            "In-App-Handbuch & Systemgrenzen",
+            "docs/USER_MANUAL.md · docs/SYSTEM_LIMITS.md",
+            [
+                "• Lokal gebündelt (0 Runtime-CDNs)",
+                "• Schritt-für-Schritt-Anleitungen für 1 & 2 Rechner",
+                "• Ehrliche Abhängigkeits- & Methodik-Grenzen",
+                "• Synchron mit jedem Build aktualisiert",
+            ],
+            "box-slate",
+            ("DOCS", "#475569"),
+        ),
+        path_arrow("M 1157 816 L 1157 840 L 257 840 L 257 892", "", 0, 0, "edge-teal"),
+        arrow(472, 977, 522, 977, "Belegsprung", "edge-teal"),
+        arrow(952, 977, 1002, 977, "Netz-Fokus", "edge-teal"),
+        # Row 5: Dual Review & Exports
+        card(
+            42, 1138, 415, 200,
+            "1 & 2 · Ausgangsstand & Verblindete Bewertung",
+            "dual_review.create_session() · save_judgment() · submit_slot()",
+            [
+                "• Auswahl der Findings -> friert baseline_sha256 ein",
+                "• Weg A (Am selben Rechner): lokaler Profilwechsel",
+                "• Weg B (Auf zwei Rechnern): Prüfpaket .zip & Abgabe .json",
+                "• Vor Freigabe strikt verblindet (UI, Historie, Exporte)",
+                "• Verbindliche Abgabe friert Ersturteil unveränderbar ein",
+            ],
+            "box-violet",
+            ("BLINDED", "#7c3aed"),
+        ),
+        card(
+            502, 1138, 420, 200,
+            "3 · Freigabe nach beiden Abgaben & Überarbeitung",
+            "release_comparison() · export_comparison_json()",
+            [
+                "• Sperre: Freigabe erst möglich, wenn Abgabe 1 UND 2 da",
+                "• Zeigt Ersturteile, Begründungen & Feld-Diffs nebeneinander",
+                "• Auf 2 Rechnern: Rückgabe ux-vergleich-<id>.json an R2",
+                "• Optionale Folgebewertung (phase='revision') möglich;",
+                "  abgegebenes Ersturteil (phase='initial') bleibt erhalten!",
+            ],
+            "box-amber",
+            ("RELEASE", "#d97706"),
+        ),
+        card(
+            967, 1138, 415, 200,
+            "4 · Ausdrückliche Übernahme in den Studienstand",
+            "adopt_resolution() · ADOPTED / OPEN_DISAGREEMENT",
+            [
+                "• Auswahl bei Abweichung: Fassung Prüfer 1, Prüfer 2,",
+                "  Ausgangsvorschlag oder gemeinsame Konsensfassung",
+                "• Oder bewusst als ‚Offene Abweichung‘ belassen",
+                "• Atomarer, idempotenter Datei-Import (0 Duplikate,",
+                "  fremde/beschädigte Pakete ändern 0 Daten)",
+            ],
+            "box-emerald",
+            ("ADOPT", "#059669"),
+        ),
+        card(
+            1427, 1138, 389, 200,
+            "Berichte & Forschungs-JSON-Export",
+            "html_handout() · markdown_report() · /api/ux-export",
+            [
+                "• A4-HTML & Markdown nutzen übernommenen Studienstand",
+                "  und markieren offene Abweichungen deutlich sichtbar",
+                "• Forschungs-JSON bewahrt Ersturteile (initial), spätere",
+                "  Änderungen (revisions) & übernommene Fassung komplett",
+                "• Originalbelege & gewählter Laufstand fest verknüpft",
             ],
             "box-emerald",
             ("EXPORT", "#059669"),
         ),
-        path_arrow("M 1137 828 L 1137 854 L 242 854 L 242 908", "", 0, 0),
-        path_arrow("M 1137 828 L 1137 854 L 697 854 L 697 908", "", 0, 0),
-        arrow(442, 992, 492, 992, "Fokus"),
-        arrow(902, 992, 952, 992, "Belegkette", "edge-teal"),
-        arrow(1362, 992, 1412, 992, "Übergabe"),
+        path_arrow("M 257 1062 L 257 1138", "Optional starten", 315, 1094, "edge-teal"),
+        arrow(457, 1238, 502, 1238, ".zip / .json", "edge-file"),
+        arrow(922, 1238, 967, 1238, "Auswahl", "edge-teal"),
+        arrow(1382, 1238, 1427, 1238, "Studienstand", "edge-teal"),
     ]
     return wrap_svg(
-        1800,
-        1120,
-        "UX-mAInd Studio (R30) — Gesamtarchitektur & Quellengebundener Datenfluss",
-        "Vollständige Open-Source-Pipeline auf Basis von Docling, Docling Core, Docling Graph, LiteLLM, SQLite WAL und React 19",
+        1860,
+        1390,
+        "UX-mAInd Studio — Vollständige Gesamtarchitektur: Import, Docling, Re-Grounding, Dual-View, Zweitprüfung & Export",
+        "Durchgängiger quellengebundener Datenfluss mit dauerhaftem Arbeitsordner, 1-/2-Rechner-Zweitprüfung und strikter Trennung lokaler vs. optionaler externer Aufrufe",
         b,
     )
 
 
 def build_02_conversion_vision() -> str:
     b = [
+        legend_strip(706, 20, 830),
         '<rect x="24" y="88" width="1512" height="310" class="lane" />',
         '<text x="42" y="112" class="lane-title">STUFE 01 · LOKALE DOCLING-KONVERTIERUNG &amp; OFFICE-FORMATIERUNGSBRÜCKE (KEIN CLOUD-AUFRUF)</text>',
         '<rect x="24" y="420" width="1512" height="310" class="lane" />',
@@ -479,7 +569,7 @@ def build_02_conversion_vision() -> str:
         ),
         path_arrow("M 1369 375 L 1369 405 L 219 405 L 219 464", "Bilder & Folien", 790, 401, "edge-teal"),
         arrow(394, 584, 444, 584, "Freigabe"),
-        arrow(814, 584, 864, 584, "API / Lokal"),
+        arrow(814, 584, 864, 584, "Opt. API / Lokal", "edge-ext"),
         arrow(1194, 584, 1244, 584, "Meta-Felder", "edge-teal"),
     ]
     return wrap_svg(
@@ -493,6 +583,7 @@ def build_02_conversion_vision() -> str:
 
 def build_03_stage_a() -> str:
     b = [
+        legend_strip(706, 20, 830),
         '<rect x="24" y="88" width="1512" height="315" class="lane" />',
         '<text x="42" y="112" class="lane-title">TEIL A1 · VERLUSTFREIE QUELLAUFBEREITUNG &amp; DOCLING-GRAPH SCHEMA-EXTRAKTION</text>',
         '<rect x="24" y="425" width="1512" height="330" class="lane" />',
@@ -555,7 +646,7 @@ def build_03_stage_a() -> str:
             ("RAW RUN", "#475569"),
         ),
         arrow(394, 255, 444, 255, "DocLang / MD"),
-        arrow(794, 255, 844, 255, "JSON-Schema"),
+        arrow(794, 255, 844, 255, "Opt. LLM / Lokal", "edge-ext"),
         arrow(1184, 255, 1234, 255, "LLM Output"),
         # Row 2: Re-grounding cascade
         card(
@@ -1031,12 +1122,12 @@ def build_06_capabilities_vs_limits() -> str:
         ),
         card(
             1090, 650, 464, 144,
-            "Lokale Einzelplatz-Architektur vs. Cloud-Web-App",
+            "Lokale Einzel-/Zweitprüfung vs. Echtzeit-Multi-User",
             "SYSTEM_LIMITS.md · Grenze L7 (Deployment)",
             [
-                "• Aktuell lokaler 127.0.0.1-Server mit 1 Hintergrund-Job-Slot",
-                "• Für Mehrbenutzer-Cloud-Betrieb: Worker-Queue (Redis/Celery)",
-                "  + PostgreSQL + Mandanten-Auth entkoppeln",
+                "• Unterstützt Einzelprüfung sowie 1- & 2-Rechner-Zweitprüfung lokal",
+                "• Für gleichzeitigen Echtzeit-Mehrbenutzer-Server: Worker-Queue",
+                "  (Redis) + PostgreSQL + ReviewerIdentityProvider-SSO anbinden",
             ],
             "box-rose",
             ("AUSBLICK", "#e11d48"),
@@ -1051,6 +1142,320 @@ def build_06_capabilities_vs_limits() -> str:
     )
 
 
+def build_07_dual_review_state_and_workspace() -> str:
+    b = [
+        legend_strip(706, 20, 830),
+        '<rect x="24" y="88" width="1512" height="275" class="lane" />',
+        '<text x="42" y="112" class="lane-title">MODUL A · DAUERHAFTER ARBEITSORDNER, ALTBESTANDS-SCHUTZ (WORKSPACE-R12) &amp; LOKALE PRÜFERPROFILE</text>',
+        '<rect x="24" y="384" width="1512" height="390" class="lane" />',
+        '<text x="42" y="408" class="lane-title">MODUL B · GEMEINSAMER 4-STUFEN-ZUSTANDSAUTOMAT FÜR EINZELPRÜFUNG, 1-RECHNER- &amp; 2-RECHNER-ZWEITPRÜFUNG</text>',
+        # Row 1: Workspace & Identity
+        card(
+            44, 130, 460, 212,
+            "Dauerhafter Standardpfad & --workspace Vorrang",
+            "library.default_workspace_path() · start-ux-maind.cmd",
+            [
+                "• Standard unter Windows: %LOCALAPPDATA%\\UX-mAInd\\workspace",
+                "• Geöffneter Pfad sichtbar in Sidebar, Korpus & Einstellungen",
+                "• Explizites --workspace <Pfad> hat immer Vorrang (trennt",
+                "  Entwicklung & Abnahmetests sauber vom BA-Arbeitsstand)",
+                "• Alle Versionen, Belege & Zwischenstände neustartfest in SQLite",
+            ],
+            "box-teal",
+            ("WORKSPACE", "#0d9488"),
+        ),
+        card(
+            550, 130, 460, 212,
+            "Schreibgeschützte workspace-r12-Erkennung & Kopie",
+            "library.probe_legacy_workspace() · ?mode=ro",
+            [
+                "• Prüft beim Start lesend Nachbarordner workspace-r12",
+                "• Zeigt Dokument-, Lauf- & Finding-Zähler im Startbanner & UI",
+                "• Übernahme bei geschlossenem Studio per Ordner-Kopie nach",
+                "  workspace (workspace-r12 bleibt als Rückfallebene erhalten!)",
+                "• Stellt Standard-Ausgabeordner automatisch auf workspace\\exports",
+            ],
+            "box-amber",
+            ("MIGRATION", "#d97706"),
+        ),
+        card(
+            1056, 130, 460, 212,
+            "Lokale Prüferprofile & Architektur-Anschlusspunkt",
+            "auth.py · LocalProfileIdentityProvider · ReviewerIdentityProvider",
+            [
+                "• Einzelprüfung direkt mit lokalem Standard-Prüfer (freiwilliges 2. Profil)",
+                "• Für Zweitprüfung genügen Anzeigename oder Kürzel (z.B. CU / ZP2)",
+                "• 100 % lokal ohne Cloud-Dienst, Login-Mauer oder kommerzielles Konto",
+                "• Revisionssicherer Stempel in ux_decisions.payload.reviewer",
+                "• Protokoll ReviewerIdentityProvider für spätere SSO/OIDC-Anbindung",
+            ],
+            "box-slate",
+            ("IDENTITY", "#475569"),
+        ),
+        arrow(504, 236, 550, 236, "Prüft Altbestand"),
+        arrow(1010, 236, 1056, 236, "SQLite Settings", "edge-teal"),
+        # Row 2: 4-Stage Dual Review State Machine
+        card(
+            44, 430, 340, 318,
+            "Schritt 1 · Ausgangsstand festhalten",
+            "create_session() · IN_PROGRESS",
+            [
+                "• Auswahl beliebiger Findings der Studie",
+                "• Wahl: ‚Am selben Rechner‘ ODER",
+                "  ‚Auf zwei Rechnern‘",
+                "• Friert kanonischen Snapshot ein:",
+                "  – Originaldateien (source_sha256)",
+                "  – DoclingDocument-Versionen",
+                "  – Stufe-A-Läufe & Originalbelege",
+                "  – Ausgewählte Findings (F1..Fn)",
+                "• Berechnet Prüfsumme baseline_sha256",
+            ],
+            "box-slate",
+            ("STEP 1", "#475569"),
+        ),
+        card(
+            424, 430, 345, 318,
+            "Schritt 2 · Unabhängig bewerten",
+            "save_judgment(phase='initial') · submit_slot()",
+            [
+                "• Beide Prüfer sehen dieselben Vorschläge",
+                "  & Originalbelege in der Dual-View",
+                "• Aktion: Bestätigen / Korrigieren /",
+                "  Verwerfen / Offen + Begründung",
+                "• STRIKTE VERBLINDUNG vor Freigabe:",
+                "  Kein Zugriff auf fremdes Urteil, fremde",
+                "  Finding-Korrekturen, Historie, Graph",
+                "  oder gespeicherte Exporte (HTTP 403)!",
+                "• Abgabe friert Ersturteil fest ein",
+            ],
+            "box-violet",
+            ("STEP 2 · BLIND", "#7c3aed"),
+        ),
+        card(
+            809, 430, 345, 318,
+            "Schritt 3 · Vergleichen & Revidieren",
+            "release_comparison() · save_judgment('revision')",
+            [
+                "• Freigabe-Sperre: Erst aktiv, sobald",
+                "  submitted_a_at UND submitted_b_at gesetzt",
+                "• Zeigt Ersturteile, Begründungen &",
+                "  abweichende Felder nebeneinander",
+                "• Jede Person kann danach optional eine",
+                "  Folgebewertung abgeben (phase='revision')",
+                "• Abgegebenes Ersturteil (initial) bleibt",
+                "  im Verlauf & JSON unverändert erhalten!",
+            ],
+            "box-amber",
+            ("STEP 3 · COMPARE", "#d97706"),
+        ),
+        card(
+            1194, 430, 322, 318,
+            "Schritt 4 · Ergebnis übernehmen",
+            "adopt_resolution() · Exporte",
+            [
+                "• Ausdrückliche Wahl für den Studienstand:",
+                "  – Fassung Prüfer 1 / Prüfer 2",
+                "  – Ausgangsvorschlag / Konsensfassung",
+                "  – Oder ‚Offene Abweichung‘ belassen",
+                "• A4-HTML & Markdown zeigen gewählten",
+                "  Stand + offene Abweichungen",
+                "• Forschungs-JSON enthält Ersturteile,",
+                "  Revisionen & übernommene Fassung",
+            ],
+            "box-emerald",
+            ("STEP 4 · ADOPT", "#059669"),
+        ),
+        arrow(384, 589, 424, 589, "Freeze", "edge-teal"),
+        arrow(769, 589, 809, 589, "Beide abgegeben", "edge-amber"),
+        arrow(1154, 589, 1194, 589, "Auswahl", "edge-teal"),
+    ]
+    return wrap_svg(
+        1560,
+        800,
+        "Moduldiagramm 07 — Dauerhafter Arbeitsordner, Altbestands-Übernahme & 4-Stufen-Zweitprüfung",
+        "Identischer lokaler Prüf- und Verblindungsablauf für ‚Am selben Rechner‘ und ‚Auf zwei Rechnern‘ ohne Cloud- oder Kontozwang",
+        b,
+    )
+
+
+def build_08_two_machine_exchange_and_release() -> str:
+    b = [
+        legend_strip(706, 20, 830),
+        # Two vertical machine swimlanes + center transfer lane
+        '<rect x="28" y="88" width="560" height="820" class="lane" />',
+        '<text x="48" y="114" class="lane-title">RECHNER 1 · AUSGANGSRECHNER (PRÜFER 1 · STUDIENLEITUNG)</text>',
+        '<rect x="612" y="88" width="336" height="820" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.4" stroke-dasharray="6 4" rx="14" ry="14" />',
+        '<text x="632" y="114" class="lane-title">LOKALER DATEITRANSFER (.ZIP / .JSON)</text>',
+        '<rect x="972" y="88" width="560" height="820" class="lane" />',
+        '<text x="992" y="114" class="lane-title">RECHNER 2 · EMPFÄNGER (PRÜFER 2 · 0 MODELLAUFRUFE · OFFLINE)</text>',
+        # Step 1: Origin starts & exports assignment zip
+        card(
+            48, 134, 520, 142,
+            "1. Zweitprüfung ‚Auf zwei Rechnern‘ starten & Prüfer 1 bewertet",
+            "create_session(mode='two_machines') · save_judgment() · submit_slot()",
+            [
+                "• Optional zuvor gelaufene KI-Pipeline (Lokal Ollama / Opt. HTTPS-API)",
+                "• Friert ausgewählte Findings, A-Läufe & Originaldokumente ein (baseline_sha256)",
+                "• Prüfer 1 bewertet verblindet & gibt Ersturteil ab (bleibt auf R1 geschützt)",
+            ],
+            "box-teal",
+            ("R1 · START", "#0d9488"),
+        ),
+        card(
+            628, 148, 304, 114,
+            "Datei 1 · Prüfpaket (.zip)",
+            "ux-pruefpaket-<id>.zip",
+            [
+                "• Originale + Docling JSON + Display-PDF",
+                "• A/B/C-Ausgangsstand + SHA-256-Manifest",
+                "• ENTHÄLT 0 URTEILE VON PRÜFER 1!",
+            ],
+            "box-violet",
+            ("TRANSFER 1", "#7c3aed"),
+        ),
+        card(
+            992, 134, 520, 142,
+            "2. Prüfpaket importieren & Originalbelege in Dual-View prüfen",
+            "import_package(.zip) · _rebind_run_result_for_local_doc()",
+            [
+                "• Prüft package_sha256 & alle Datei-Hashes vor dem ersten Schreibzugriff",
+                "• Öffnet Findings & Originalbelege (PDF/Office/TXT + Docling) komplett lokal",
+                "• Keine Verbindung zu Rechner 1 und KEIN erneuter Sprachmodell-Lauf nötig!",
+            ],
+            "box-teal",
+            ("R2 · IMPORT", "#0d9488"),
+        ),
+        arrow(568, 205, 628, 205, "", "edge-file"),
+        arrow(932, 205, 992, 205, "", "edge-file"),
+        # Step 2: R2 submits & returns JSON
+        card(
+            992, 306, 520, 136,
+            "3. Prüfer 2 bewertet verblindet & gibt Ersturteil verbindlich ab",
+            "save_judgment(slot='reviewer_b') · submit_slot()",
+            [
+                "• Prüfer 2 sieht nur den gemeinsamen Ausgangsvorschlag & eigene Eingaben",
+                "• Verbindliche Abgabe friert submitted_b_at & Ersturteil (phase='initial') ein",
+                "• Exportiert signierte Rückgabedatei für Rechner 1",
+            ],
+            "box-violet",
+            ("R2 · ABGABE", "#7c3aed"),
+        ),
+        card(
+            628, 316, 304, 116,
+            "Datei 2 · Rückgabe Prüfer 2 (.json)",
+            "ux-abgabe-<id>-reviewer_b.json",
+            [
+                "• Prüft session_id & baseline_sha256",
+                "• Re-Import idempotent (0 Duplikate)",
+                "• Fremde/defekte Datei -> atomarer Abbruch",
+            ],
+            "box-violet",
+            ("TRANSFER 2", "#7c3aed"),
+        ),
+        card(
+            48, 306, 520, 136,
+            "4. Rückgabe einlesen & Freigabe-Schranke prüfen",
+            "import_package(.json) -> release_comparison()",
+            [
+                "• Vor Freigabe: Fehlt Abgabe 1 oder Abgabe 2 -> Freigabe gesperrt!",
+                "• Sobald BEIDE Ersturteile vorliegen -> Klick auf ‚Vergleich freigeben‘",
+                "• Ab jetzt sind beide Urteile, Notizen & Korrekturen auf R1 sichtbar!",
+            ],
+            "box-amber",
+            ("FREIGABE-GATE", "#d97706"),
+        ),
+        arrow(992, 374, 932, 374, "", "edge-file"),
+        arrow(628, 374, 568, 374, "", "edge-file"),
+        # Step 3: R1 exports released comparison back to R2
+        card(
+            48, 474, 520, 128,
+            "5. Freigegebenen Vergleich für Rechner 2 bereitstellen",
+            "export_comparison_json()",
+            [
+                "• Bündelt eingefrorene Ersturteile (Prüfer 1 & Prüfer 2) + Freigabezeitpunkt",
+                "• Ermöglicht Prüfer 2 die transparente Einsicht auf dem eigenen Rechner",
+            ],
+            "box-amber",
+            ("R1 · VERGLEICH", "#d97706"),
+        ),
+        card(
+            628, 480, 304, 116,
+            "Datei 3 · Vergleichsdatei (.json)",
+            "ux-vergleich-<id>.json",
+            [
+                "• Enthält beide Ersturteile + Diffs",
+                "• Schaltet Vergleichsansicht auf R2 frei",
+                "• SHA-256-gesichert & idempotent",
+            ],
+            "box-violet",
+            ("TRANSFER 3", "#7c3aed"),
+        ),
+        card(
+            992, 474, 520, 128,
+            "6. Vergleich auf Rechner 2 sichten & optional überarbeiten",
+            "import_package(ux-vergleich) · save_judgment(phase='revision')",
+            [
+                "• Prüfer 2 sieht beide Bewertungen & Korrekturvorschläge nebeneinander",
+                "• Optional: Folgebewertung erfassen (Ersturteil bleibt separat erhalten!)",
+            ],
+            "box-sky",
+            ("R2 · REVISION", "#0284c7"),
+        ),
+        arrow(568, 538, 628, 538, "", "edge-file"),
+        arrow(932, 538, 992, 538, "", "edge-file"),
+        # Step 4: Optional revision return & final study adoption
+        card(
+            628, 646, 304, 116,
+            "Datei 4 · Überarbeitung (opt. .json)",
+            "ux-ueberarbeitung-<id>-reviewer_b.json",
+            [
+                "• Überträgt phase='revision'-Einträge",
+                "• Überschreibt NIEMALS das Ersturteil",
+                "• Idempotenter Import über decision_uid",
+            ],
+            "box-violet",
+            ("TRANSFER 4", "#7c3aed"),
+        ),
+        card(
+            48, 636, 520, 246,
+            "7. Überarbeitung einlesen, Studienstand wählen & Berichte exportieren",
+            "adopt_resolution() · html_handout() · markdown_report() · ux-export",
+            [
+                "• Übernimmt ausdrücklich gewählte Fassung (Prüfer 1, Prüfer 2, Konsens,",
+                "  Ausgangsvorschlag) oder markiert ‚Offene Abweichung‘",
+                "• A4-HTML & Markdown zeigen gewählten Studienstand + Originalbelege",
+                "• Forschungs-JSON dokumentiert Ersturteile (BA-Auswertung!), spätere",
+                "  Überarbeitungen und die übernommene Fassung lückenlos",
+            ],
+            "box-emerald",
+            ("ABSCHLUSS & EXPORT", "#059669"),
+        ),
+        card(
+            992, 636, 520, 246,
+            "Schutzgarantien bei Unterbrechung & Fehlerfällen",
+            "SQLite WAL · Transaktionale Paketprüfung",
+            [
+                "• Neustart zwischen Abgaben: Alle Stände & Belege sofort wieder offen",
+                "• Doppelt eingelesene .zip/.json: Erzeugt exakt 0 doppelte Entscheidungen",
+                "• Fremder Prüfauftrag (session_id / baseline_sha256 falsch): Abweisung",
+                "• Beschädigtes Archiv / manipulierter JSON-Hash: 0 Teiländerungen!",
+                "• BA-Auswertung nutzt unverfälschte Ersturteile (reviewer_a/b.initial)",
+            ],
+            "box-slate",
+            ("SAFETY GUARANTEES", "#475569"),
+        ),
+        path_arrow("M 992 575 L 960 575 L 960 704 L 932 704", "", 0, 0, "edge-file"),
+        arrow(628, 704, 568, 704, "", "edge-file"),
+    ]
+    return wrap_svg(
+        1560,
+        936,
+        "Moduldiagramm 08 — Zweitprüfung auf zwei Rechnern: Dateiübergaben, Freigabe-Schranke & Überarbeitung",
+        "Vollständiges Offline-Austauschprotokoll (.zip / .json) ohne Serververbindung oder erneuten Modelllauf auf Rechner 2",
+        b,
+    )
+
+
 def main() -> None:
     DIAG_DIR.mkdir(parents=True, exist_ok=True)
     diagrams = {
@@ -1060,11 +1465,14 @@ def main() -> None:
         "04_stage_bc_synthesis_graph.svg": build_04_stage_bc_graph(),
         "05_dual_view_human_loop.svg": build_05_dual_view_human_loop(),
         "06_docling_capabilities_vs_limits.svg": build_06_capabilities_vs_limits(),
+        "07_dual_review_state_and_workspace.svg": build_07_dual_review_state_and_workspace(),
+        "08_two_machine_exchange_and_release.svg": build_08_two_machine_exchange_and_release(),
     }
     for fname, content in diagrams.items():
+        ET.fromstring(content.encode("utf-8"))
         out = DIAG_DIR / fname
         out.write_text(content, encoding="utf-8")
-        print(f"Generated {out.relative_to(ROOT)} ({len(content):,} bytes)")
+        print(f"Generated & XML-verified {out.relative_to(ROOT)} ({len(content):,} bytes)")
 
 
 if __name__ == "__main__":

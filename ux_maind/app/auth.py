@@ -1,25 +1,24 @@
-"""Decoupled researcher identity & optional OIDC / Google OAuth 2.0 adapter (`US-74`).
+"""Local researcher profiles & extensible identity provider interface.
 
-Local loopback workspaces operate 100% offline with zero login wall using switchable
-local researcher profiles. When `UX_MAIND_OIDC_CLIENT_ID` is configured in the server
-environment (e.g. Google OAuth 2.0 or university Keycloak/Shibboleth OIDC), standard
-OpenID Connect Discovery + Authorization Code flow is available without vendor lock-in.
+For Bachelor's thesis studies and local peer dual-reviews, UX-mAInd Studio operates
+100% offline without cloud accounts or login walls: a reviewer profile requires only
+a display name or short code (`display_name`, optional `short_code` and `role`).
+
+Future institutional or team deployments can attach an authenticated identity provider
+(e.g. university SSO / OIDC / SAML) by implementing `ReviewerIdentityProvider` without
+altering `ux_decisions`, `dual_review`, or export schemas.
 """
 
 from __future__ import annotations
 
-import base64
-import hashlib
-import json
-import os
 import re
 import secrets
-from urllib.parse import urlencode
-import urllib.request
+from typing import Protocol, runtime_checkable
 
 DEFAULT_RESEARCHER = {
     "id": "default",
     "display_name": "Standard-Prüfer",
+    "short_code": "SP",
     "role": "UX-Forscher",
     "auth_mode": "local",
 }
@@ -30,85 +29,139 @@ def _slug_id(text: str) -> str:
     return cleaned[:48] or f"reviewer-{secrets.token_hex(3)}"
 
 
-def oidc_env_config() -> dict:
-    """Inspect environment for optional OIDC / Google OAuth configuration without exposing secrets."""
-    client_id = (os.environ.get("UX_MAIND_OIDC_CLIENT_ID") or "").strip()
-    client_secret = (os.environ.get("UX_MAIND_OIDC_CLIENT_SECRET") or "").strip()
-    issuer = (
-        os.environ.get("UX_MAIND_OIDC_ISSUER") or "https://accounts.google.com"
-    ).strip().rstrip("/")
-    provider_label = (
-        "Google OAuth 2.0 / OIDC"
-        if "accounts.google.com" in issuer
-        else f"OIDC ({issuer})"
-    )
-    return {
-        "enabled": bool(client_id and client_secret),
-        "issuer": issuer,
-        "provider_label": provider_label,
-        "client_id_configured": bool(client_id),
-        "client_secret_configured": bool(client_secret),
-    }
+def _derive_short_code(name: str, explicit: str = "") -> str:
+    code = re.sub(r"[^A-Za-z0-9ÄÖÜäöü_-]+", "", (explicit or "").strip()).upper()[:12]
+    if code:
+        return code
+    parts = [p for p in re.split(r"[\s._-]+", name.strip()) if p]
+    if len(parts) >= 2:
+        return "".join(p[0] for p in parts[:4]).upper()
+    cleaned = re.sub(r"[^A-Za-z0-9ÄÖÜäöü]+", "", name.strip()).upper()
+    return cleaned[:4] or "PR"
+
+
+@runtime_checkable
+class ReviewerIdentityProvider(Protocol):
+    """Architectural extension hook for pluggable reviewer authentication."""
+
+    mode: str
+
+    def list_identities(self, workspace) -> dict: ...
+
+    def active_stamp(self, workspace) -> dict: ...
+
+
+class LocalProfileIdentityProvider:
+    """Default local SQLite-backed reviewer profile store (name or short code only)."""
+
+    mode = "local"
+
+    def list_identities(self, workspace) -> dict:
+        stored = workspace.setting("researcher_profiles")
+        profiles = []
+        if isinstance(stored, list):
+            for raw in stored:
+                if isinstance(raw, dict) and raw.get("id") and raw.get("display_name"):
+                    entry = {
+                        "id": str(raw["id"]),
+                        "display_name": str(raw["display_name"]),
+                        "short_code": _derive_short_code(
+                            str(raw["display_name"]), str(raw.get("short_code") or "")
+                        ),
+                        "role": str(raw.get("role") or "UX-Forscher"),
+                        "auth_mode": str(raw.get("auth_mode") or "local"),
+                    }
+                    profiles.append(entry)
+        if not any(p["id"] == "default" for p in profiles):
+            profiles.insert(0, dict(DEFAULT_RESEARCHER))
+        active_id = str(workspace.setting("active_researcher_id") or "default")
+        active = next((p for p in profiles if p["id"] == active_id), profiles[0])
+        return {
+            "active": active,
+            "profiles": profiles,
+            "identity_mode": self.mode,
+            "extension_point": "ReviewerIdentityProvider",
+        }
+
+    def active_stamp(self, workspace) -> dict:
+        active = self.list_identities(workspace)["active"]
+        stamp = {
+            "id": active["id"],
+            "name": active["display_name"],
+            "short_code": active.get("short_code")
+            or _derive_short_code(active["display_name"]),
+            "auth_mode": active.get("auth_mode") or self.mode,
+        }
+        if active.get("role"):
+            stamp["role"] = active["role"]
+        return stamp
+
+
+_PROVIDER: ReviewerIdentityProvider = LocalProfileIdentityProvider()
+
+
+def set_identity_provider(provider: ReviewerIdentityProvider) -> None:
+    """Register a custom `ReviewerIdentityProvider` (e.g. university SSO/OIDC)."""
+    global _PROVIDER
+    _PROVIDER = provider
 
 
 def list_profiles(workspace) -> dict:
-    """Return all saved researcher profiles and the currently active reviewer."""
-    stored = workspace.setting("researcher_profiles")
-    profiles = (
-        [p for p in stored if isinstance(p, dict) and p.get("id") and p.get("display_name")]
-        if isinstance(stored, list)
-        else []
-    )
-    if not any(p["id"] == "default" for p in profiles):
-        profiles.insert(0, dict(DEFAULT_RESEARCHER))
-    active_id = str(workspace.setting("active_researcher_id") or "default")
-    active = next((p for p in profiles if p["id"] == active_id), profiles[0])
-    return {
-        "active": active,
-        "profiles": profiles,
-        "oidc": oidc_env_config(),
-    }
+    """Return all saved local researcher profiles and the currently active reviewer."""
+    return _PROVIDER.list_identities(workspace)
 
 
 def active_reviewer_stamp(workspace) -> dict:
     """Compact immutable audit stamp embedded into `ux_decisions.payload.reviewer`."""
-    active = list_profiles(workspace)["active"]
-    stamp = {
-        "id": active["id"],
-        "name": active["display_name"],
-        "auth_mode": active.get("auth_mode") or "local",
-    }
-    if active.get("role"):
-        stamp["role"] = active["role"]
-    if active.get("email"):
-        stamp["email"] = active["email"]
-    return stamp
+    return _PROVIDER.active_stamp(workspace)
 
 
-def save_profile(workspace, body: dict) -> dict:
-    """Create or update a researcher profile and activate it."""
-    if not isinstance(body, dict):
-        raise ValueError("Forscher-Profil als JSON-Objekt angeben")
-    name = str(body.get("display_name") or "").strip()
+def ensure_profile(
+    workspace,
+    *,
+    display_name: str,
+    short_code: str = "",
+    role: str = "UX-Forscher",
+    profile_id: str = "",
+    activate: bool = False,
+) -> dict:
+    """Ensure a local researcher profile exists without clobbering active reviewer unless requested."""
+    name = str(display_name or "").strip()
     if not name or len(name) > 80:
-        raise ValueError("Anzeigename des Prüfers erforderlich (max. 80 Zeichen)")
-    role = str(body.get("role") or "UX-Forscher").strip()[:60]
-    email = str(body.get("email") or "").strip()[:120]
-    prof_id = str(body.get("id") or "").strip() or _slug_id(name)
+        raise ValueError("Anzeigename oder Kürzel des Prüfers erforderlich (max. 80 Zeichen)")
+    clean_role = str(role or "UX-Forscher").strip()[:60]
+    prof_id = str(profile_id or "").strip() or _slug_id(name)
+    code = _derive_short_code(name, short_code)
 
     state = list_profiles(workspace)
+    existing = next((p for p in state["profiles"] if p["id"] == prof_id), None)
     profiles = [p for p in state["profiles"] if p["id"] != prof_id]
     entry = {
         "id": prof_id,
         "display_name": name,
-        "role": role,
-        "auth_mode": "oidc" if body.get("auth_mode") == "oidc" else "local",
+        "short_code": code,
+        "role": clean_role or (existing or {}).get("role") or "UX-Forscher",
+        "auth_mode": "local",
     }
-    if email:
-        entry["email"] = email
     profiles.append(entry)
     workspace.set_setting("researcher_profiles", profiles)
-    workspace.set_setting("active_researcher_id", prof_id)
+    if activate:
+        workspace.set_setting("active_researcher_id", prof_id)
+    return entry
+
+
+def save_profile(workspace, body: dict) -> dict:
+    """Create or update a local researcher profile and activate it."""
+    if not isinstance(body, dict):
+        raise ValueError("Forscher-Profil als JSON-Objekt angeben")
+    ensure_profile(
+        workspace,
+        display_name=str(body.get("display_name") or ""),
+        short_code=str(body.get("short_code") or ""),
+        role=str(body.get("role") or "UX-Forscher"),
+        profile_id=str(body.get("id") or ""),
+        activate=True,
+    )
     return list_profiles(workspace)
 
 
@@ -133,41 +186,3 @@ def delete_profile(workspace, profile_id: str) -> dict:
     if state["active"]["id"] == target:
         workspace.set_setting("active_researcher_id", "default")
     return list_profiles(workspace)
-
-
-def build_oidc_authorize_url(workspace, redirect_uri: str) -> dict:
-    """Build standard OIDC Authorization Code + PKCE URL when OIDC env vars are configured."""
-    cfg = oidc_env_config()
-    if not cfg["enabled"]:
-        raise ValueError(
-            "Optionale OIDC-/Google-Anmeldung ist nicht konfiguriert "
-            "(UX_MAIND_OIDC_CLIENT_ID und UX_MAIND_OIDC_CLIENT_SECRET setzen)."
-        )
-    disc_url = f"{cfg['issuer']}/.well-known/openid-configuration"
-    with urllib.request.urlopen(disc_url, timeout=10) as resp:
-        disc = json.loads(resp.read().decode("utf-8"))
-    auth_endpoint = disc.get("authorization_endpoint")
-    if not auth_endpoint:
-        raise ValueError("OIDC-Discovery enthält keinen authorization_endpoint")
-
-    state_tok = secrets.token_urlsafe(24)
-    verifier = secrets.token_urlsafe(48)
-    challenge = (
-        base64.urlsafe_b64encode(hashlib.sha256(verifier.encode("ascii")).digest())
-        .decode("ascii")
-        .rstrip("=")
-    )
-    workspace.set_setting(
-        "oidc_pending_flow",
-        {"state": state_tok, "code_verifier": verifier, "redirect_uri": redirect_uri},
-    )
-    params = {
-        "client_id": os.environ["UX_MAIND_OIDC_CLIENT_ID"].strip(),
-        "response_type": "code",
-        "scope": "openid email profile",
-        "redirect_uri": redirect_uri,
-        "state": state_tok,
-        "code_challenge": challenge,
-        "code_challenge_method": "S256",
-    }
-    return {"authorize_url": f"{auth_endpoint}?{urlencode(params)}", "state": state_tok}

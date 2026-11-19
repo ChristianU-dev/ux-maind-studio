@@ -154,6 +154,13 @@ def main() -> int:
         else:
             shutil.copy2(src, dst)
 
+    docs_out = OUTDIR / "docs"
+    docs_out.mkdir(parents=True, exist_ok=True)
+    for doc_name in ("USER_MANUAL.md", "SYSTEM_LIMITS.md"):
+        doc_src = ROOT / "docs" / doc_name
+        if doc_src.is_file():
+            shutil.copy2(doc_src, docs_out / doc_name)
+
     for entry in sorted(OUTDIR.iterdir()):
         size = entry.stat().st_size if entry.is_file() else 0
         print(f"{entry.name} {size}")

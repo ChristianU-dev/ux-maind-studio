@@ -302,9 +302,53 @@ export function WorkspacePathsTab() {
       </p>
 
       <div className="lx-kv-item">
-        <span className="lx-muted lx-text-xs">{t("Aktiver Arbeitsbereich", "Active Workspace")}</span>
-        <code className="lx-mono-tag">{pathsInfo?.workspace || "—"}</code>
+        <span className="lx-muted lx-text-xs">
+          {t("Tatsächlich geöffneter Arbeitsordner", "Actually Opened Workspace Folder")}
+        </span>
+        <div className="lx-row-gap" style={{ flexWrap: "wrap" }}>
+          <code className="lx-mono-tag" data-testid="settings-workspace-path">
+            {pathsInfo?.workspace || "—"}
+          </code>
+          <span className="lx-mono-tag">
+            {pathsInfo?.is_default_workspace
+              ? t("Dauerhafter Standardpfad", "Permanent Default Path")
+              : t("Explizites --workspace", "Explicit --workspace Override")}
+          </span>
+        </div>
       </div>
+
+      {pathsInfo?.default_workspace && !pathsInfo?.is_default_workspace && (
+        <div className="lx-kv-item">
+          <span className="lx-muted lx-text-xs">
+            {t("Regulärer Standardpfad", "Standard Application Path")}
+          </span>
+          <code className="lx-mono-tag">{pathsInfo.default_workspace}</code>
+        </div>
+      )}
+
+      {pathsInfo?.legacy_workspace?.found && (
+        <div
+          className="lx-review-guide"
+          data-testid="settings-legacy-r12-notice"
+          style={{ marginTop: 4 }}
+        >
+          <strong className="lx-text-xs">
+            {t(
+              `Vorhandener Altbestand in workspace-r12 erkannt (${pathsInfo.legacy_workspace.documents} Dok., ${pathsInfo.legacy_workspace.runs} A-Läufe, ${pathsInfo.legacy_workspace.findings} Findings)`,
+              `Existing workspace-r12 detected (${pathsInfo.legacy_workspace.documents} docs, ${pathsInfo.legacy_workspace.runs} Stage-A runs, ${pathsInfo.legacy_workspace.findings} findings)`
+            )}
+          </strong>
+          <p className="lx-text-xs" style={{ marginTop: 4 }}>
+            <code>{pathsInfo.legacy_workspace.path}</code>
+          </p>
+          <p className="lx-text-xs lx-muted" style={{ marginTop: 4 }}>
+            {t(
+              "Übernahme bei geschlossenem Studio: Kopiere den Inhalt von workspace-r12 in den neuen Ordner workspace (nicht verschieben). So bleibt workspace-r12 unverändert als überprüfbare Rückfallebene erhalten.",
+              "Safe migration while Studio is closed: Copy the contents of workspace-r12 into workspace (do not move), keeping workspace-r12 intact as a verifiable fallback."
+            )}
+          </p>
+        </div>
+      )}
 
       <div className="lx-kv-item">
         <span className="lx-muted lx-text-xs">

@@ -17,11 +17,13 @@ import {
   Search,
   Square,
   Trash2,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 import { usePrefs, statusInfo } from "../lib/i18n.jsx";
 import { api } from "../lib/api.js";
 import { InfoPopover, Modal, Select, StatusBadge, Switch } from "../components/ui.jsx";
+import { uploadDualReviewPackage } from "../components/DualReviewPanel.jsx";
 
 export function CorpusView({
   filesData,
@@ -39,13 +41,16 @@ export function CorpusView({
   onClearSelection,
   onOpenDocument,
   onNavigate,
+  pathsInfo = null,
   onRefreshFiles,
+  onDualPackageImported,
   importModalOpen,
   onImportModalChange,
 }) {
   const { t } = usePrefs();
   const items = filesData?.items || [];
   const total = filesData?.total || 0;
+  const pkgInputRef = React.useRef(null);
 
   // Import state
   const [importText, setImportText] = useState("");
@@ -418,10 +423,49 @@ export function CorpusView({
 
   return (
     <div className="lx-page">
+      <input
+        ref={pkgInputRef}
+        type="file"
+        accept=".zip,.json"
+        data-testid="corpus-package-input"
+        style={{ display: "none" }}
+        onChange={async (e) => {
+          const f = e.target.files?.[0];
+          e.target.value = "";
+          if (!f) return;
+          try {
+            const res = await uploadDualReviewPackage(f);
+            toast.success(
+              res?.status === "already_imported"
+                ? t("Paket bereits eingelesen (keine Duplikate erzeugt)", "Package already imported (zero duplicates)")
+                : t("Prüfpaket / Datei erfolgreich importiert", "Review package / file imported")
+            );
+            await onDualPackageImported?.(res);
+          } catch (err) {
+            toast.error(err.message);
+          }
+        }}
+      />
+
       {/* Page Header */}
       <header className="lx-page-header">
         <div className="min-w-0">
-          <h1 className="lx-page-title">{t("Studienkorpus", "Study Corpus")}</h1>
+          <div className="lx-row-gap" style={{ flexWrap: "wrap" }}>
+            <h1 className="lx-page-title">{t("Studienkorpus", "Study Corpus")}</h1>
+            {pathsInfo?.workspace && (
+              <span
+                className="lx-mono-tag truncate"
+                data-testid="corpus-workspace-badge"
+                style={{ maxWidth: 460 }}
+                title={pathsInfo.workspace}
+              >
+                {pathsInfo.is_default_workspace
+                  ? t("Arbeitsordner", "Workspace")
+                  : "--workspace"}
+                : {pathsInfo.workspace}
+              </span>
+            )}
+          </div>
           <p className="lx-page-subtitle">
             {t(
               "Heterogene Forschungsartefakte verwalten, für die Synthese auswählen und im Original prüfen.",
@@ -430,6 +474,19 @@ export function CorpusView({
           </p>
         </div>
         <div className="lx-btn-row">
+          <button
+            type="button"
+            data-testid="corpus-import-package-btn"
+            className="lx-btn"
+            onClick={() => pkgInputRef.current?.click()}
+            title={t(
+              "Zweitprüfungs-Prüfpaket (.zip) oder Bewertungs-/Vergleichsdatei (.json) einlesen",
+              "Import Dual-Review assignment (.zip) or submission/comparison (.json)"
+            )}
+          >
+            <Upload size={14} />
+            <span>{t("Prüfpaket importieren", "Import Review Package")}</span>
+          </button>
           <button
             type="button"
             className="lx-btn"
@@ -452,6 +509,37 @@ export function CorpusView({
           </button>
         </div>
       </header>
+
+      {pathsInfo?.legacy_workspace?.found && total === 0 && (
+        <section
+          className="lx-review-guide is-warn"
+          data-testid="corpus-legacy-r12-banner"
+          style={{ marginBottom: 14 }}
+        >
+          <strong className="lx-text-xs">
+            {t(
+              `Vorhandener Arbeitsstand in workspace-r12 gefunden (${pathsInfo.legacy_workspace.documents} Dokumente, ${pathsInfo.legacy_workspace.runs} A-Läufe, ${pathsInfo.legacy_workspace.findings} Findings)`,
+              `Existing study data found in workspace-r12 (${pathsInfo.legacy_workspace.documents} docs, ${pathsInfo.legacy_workspace.runs} Stage-A runs, ${pathsInfo.legacy_workspace.findings} findings)`
+            )}
+          </strong>
+          <p className="lx-text-xs" style={{ marginTop: 4 }}>
+            {t(
+              "UX-mAInd Studio nutzt jetzt dauerhaft den Standardordner workspace. Dein bisheriger Stand unter ",
+              "UX-mAInd Studio now uses the permanent default folder workspace. Your previous workspace at "
+            )}
+            <code>{pathsInfo.legacy_workspace.path}</code>
+            {t(
+              " wurde unverändert belassen. Zur sicheren Übernahme Studio schließen und den Inhalt von workspace-r12 nach ",
+              " remains untouched. To migrate safely, close Studio and copy the contents of workspace-r12 into "
+            )}
+            <code>{pathsInfo.workspace}</code>
+            {t(
+              " kopieren (nicht verschieben, damit workspace-r12 für die Rückkehr erhalten bleibt).",
+              " (copy rather than move so workspace-r12 stays available as a fallback)."
+            )}
+          </p>
+        </section>
+      )}
 
       {/* Monochrome KPI Strip */}
       <section className="lx-kpi-grid" aria-label={t("Korpus-Kennzahlen", "Corpus Metrics")}>

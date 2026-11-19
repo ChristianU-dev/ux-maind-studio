@@ -13,6 +13,8 @@ import {
   Search,
   SlidersHorizontal,
   Sparkles,
+  Upload,
+  Users,
 } from "lucide-react";
 import { toast } from "sonner";
 import { usePrefs, statusInfo } from "../lib/i18n.jsx";
@@ -30,6 +32,12 @@ import {
 } from "../components/ui.jsx";
 import { EvidenceCard, isOpenEvidence, observationKey } from "../components/EvidenceCard.jsx";
 import { StudyAnalyticsView } from "../components/StudyAnalyticsView.jsx";
+import {
+  DualReviewFindingWorkbench,
+  DualReviewSessionBanner,
+  DualReviewStartModal,
+  uploadDualReviewPackage,
+} from "../components/DualReviewPanel.jsx";
 
 function valenceLabel(v, t) {
   const map = {
@@ -208,11 +216,17 @@ export function SynthesisView({
   onChangeResultRuns,
   onRestoreHistoricalRun,
   onRefreshWorkspace,
+  researcherState = null,
+  onSwitchReviewerProfile = null,
+  onRefreshAll = null,
+  onDualPackageImported = null,
   onShowSource,
   onFocusInGraph,
   onNavigate,
 }) {
   const { lang, t } = usePrefs();
+  const [dualModalOpen, setDualModalOpen] = useState(false);
+  const synImportInputRef = React.useRef(null);
   const [localSearch, setLocalSearch] = useState("");
   const [localReviewFilter, setLocalReviewFilter] = useState("*");
   const [localValenceFilter, setLocalValenceFilter] = useState("*");
@@ -331,6 +345,9 @@ export function SynthesisView({
               ? `B #${o.id} · ${(p.kind || "relation").replaceAll("_", " ")}`
               : [
                   `C #${o.id}`,
+                  o.dual_review?.released && o.dual_review?.resolution_state === "OPEN_DISAGREEMENT"
+                    ? `⚠ ${t("Offene Abweichung", "Open Disagreement")}`
+                    : null,
                   p.valence ? valenceLabel(p.valence, t) : null,
                   `${supCount} ${t("Belege", "supports")}`,
                   oppCount > 0 ? `${oppCount} ${t("Gegenbelege", "counter")}` : null,
@@ -480,9 +497,47 @@ export function SynthesisView({
   const findingsCount = (data?.objects || []).filter((o) => o.kind === "finding").length;
   const relationsCount = (data?.objects || []).filter((o) => o.kind === "relation").length;
   const obsCount = (data?.observations || []).length;
+  const activeDualSession = (data?.dual_review_sessions || [])[0] || null;
+
+  const handleImportFile = async (file) => {
+    try {
+      const res = await uploadDualReviewPackage(file);
+      toast.success(
+        res?.status === "already_imported"
+          ? t("Datei bereits importiert (keine doppelten Entscheidungen)", "Already imported (zero duplicates)")
+          : t("Zweitprüfungs-Datei importiert", "Dual-review file imported")
+      );
+      await (onDualPackageImported ? onDualPackageImported(res) : onRefreshWorkspace?.());
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
   return (
     <div className="lx-page lx-page-fill">
+      <input
+        ref={synImportInputRef}
+        type="file"
+        accept=".zip,.json"
+        data-testid="synthesis-package-input"
+        style={{ display: "none" }}
+        onChange={async (e) => {
+          const f = e.target.files?.[0];
+          e.target.value = "";
+          if (f) await handleImportFile(f);
+        }}
+      />
+      <DualReviewStartModal
+        open={dualModalOpen}
+        onOpenChange={setDualModalOpen}
+        workspace={workspace}
+        researcherState={researcherState}
+        onSessionStarted={async () => {
+          onTabChange("findings");
+          await (onRefreshAll ? onRefreshAll() : onRefreshWorkspace?.());
+        }}
+      />
+
       {/* Compact Synthesis Header & Active Run Strip */}
       <header className="lx-page-header lx-header-compact">
         <div className="min-w-0">
@@ -495,6 +550,27 @@ export function SynthesisView({
           </div>
         </div>
         <div className="lx-btn-row">
+          {findingsCount > 0 && !activeDualSession && (
+            <button
+              type="button"
+              data-testid="open-dual-review-modal-btn"
+              className="lx-btn lx-btn-sm"
+              onClick={() => setDualModalOpen(true)}
+            >
+              <Users size={13} />
+              <span>{t("Zweitprüfung", "Dual Review")}</span>
+            </button>
+          )}
+          <button
+            type="button"
+            data-testid="synthesis-import-package-btn"
+            className="lx-btn lx-btn-sm lx-btn-ghost"
+            onClick={() => synImportInputRef.current?.click()}
+            title={t("Prüfpaket (.zip) oder Rückgabe/Vergleich (.json) importieren", "Import .zip/.json review file")}
+          >
+            <Upload size={13} />
+            <span>{t("Prüfdatei laden", "Import Review File")}</span>
+          </button>
           <button type="button" className="lx-btn lx-btn-sm" onClick={() => setRunPickerOpen(true)}>
             <SlidersHorizontal size={13} />
             <span>{t("Laufstand", "Run Version")}</span>
@@ -563,6 +639,15 @@ export function SynthesisView({
           )}
         </div>
       </header>
+
+      {activeDualSession && (
+        <DualReviewSessionBanner
+          session={activeDualSession}
+          onSwitchProfile={onSwitchReviewerProfile}
+          onRefreshAll={onRefreshAll || onRefreshWorkspace}
+          onImportPackageFile={handleImportFile}
+        />
+      )}
 
       <Tabs.Root value={activeTab} onValueChange={onTabChange} className="lx-tabs-fill">
         <Tabs.List className="lx-tabs-list" aria-label={t("Synthese-Ebenen", "Synthesis Layers")}>
@@ -900,19 +985,26 @@ export function SynthesisView({
                         ) : null;
                       })()}
 
-                      <ResearcherReviewBlock
-                        targetType={obj.kind}
-                        target={obj.id}
-                        decisions={obj.decisions}
-                        currentEffective={p}
-                        apiCall={api}
-                        onSaved={() => {
-                          toast.success(
-                            t("Forschungsentscheidung gespeichert", "Review decision saved")
-                          );
-                          return onRefreshWorkspace();
-                        }}
-                      />
+                      {obj.kind === "finding" && obj.dual_review ? (
+                        <DualReviewFindingWorkbench
+                          finding={obj}
+                          onSaved={() => (onRefreshAll ? onRefreshAll() : onRefreshWorkspace())}
+                        />
+                      ) : (
+                        <ResearcherReviewBlock
+                          targetType={obj.kind}
+                          target={obj.id}
+                          decisions={obj.decisions}
+                          currentEffective={p}
+                          apiCall={api}
+                          onSaved={() => {
+                            toast.success(
+                              t("Forschungsentscheidung gespeichert", "Review decision saved")
+                            );
+                            return onRefreshWorkspace();
+                          }}
+                        />
+                      )}
 
                       {obj.kind === "finding" && Array.isArray(p.relations) && p.relations.length > 0 && (
                         <div className="lx-row-wrap">

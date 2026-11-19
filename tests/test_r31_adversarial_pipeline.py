@@ -441,24 +441,11 @@ class R31AdversarialPipelineTests(unittest.TestCase):
                 self.assertEqual(reviewer.get("name"), "Dr. Ada Lovelace")
                 self.assertEqual(reviewer.get("role"), "Zweitprüferin")
 
-                # Verify OIDC env inspection never leaks secrets
-                old_cid = os.environ.get("UX_MAIND_OIDC_CLIENT_ID")
-                old_sec = os.environ.get("UX_MAIND_OIDC_CLIENT_SECRET")
-                try:
-                    os.environ["UX_MAIND_OIDC_CLIENT_ID"] = "oidc-client-demo"
-                    os.environ["UX_MAIND_OIDC_CLIENT_SECRET"] = "TopSecretNeverExposeOidc99"
-                    r_info = client.get("/api/researchers").json()
-                    self.assertTrue(r_info["oidc"]["enabled"])
-                    self.assertNotIn("TopSecretNeverExposeOidc99", json.dumps(r_info))
-                finally:
-                    if old_cid is None:
-                        os.environ.pop("UX_MAIND_OIDC_CLIENT_ID", None)
-                    else:
-                        os.environ["UX_MAIND_OIDC_CLIENT_ID"] = old_cid
-                    if old_sec is None:
-                        os.environ.pop("UX_MAIND_OIDC_CLIENT_SECRET", None)
-                    else:
-                        os.environ["UX_MAIND_OIDC_CLIENT_SECRET"] = old_sec
+                # Verify local offline identity contract & short_code support (no cloud login wall)
+                r_info = client.get("/api/researchers").json()
+                self.assertEqual(r_info["identity_mode"], "local")
+                self.assertEqual(r_info["extension_point"], "ReviewerIdentityProvider")
+                self.assertTrue(bool(r_info["active"].get("short_code")))
 
 
 if __name__ == "__main__":

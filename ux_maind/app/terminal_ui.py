@@ -119,6 +119,8 @@ def emit_startup_banner(
     output_dir: str,
     detected_envs: list[str],
     workflow_cfg: dict,
+    legacy_workspace: dict | None = None,
+    is_default_workspace: bool = True,
     verbose: bool = False,
     stream=None,
 ) -> None:
@@ -136,12 +138,24 @@ def emit_startup_banner(
         f"TableFormer={conv.get('table_mode', 'accurate')}, "
         f"Scale={conv.get('images_scale', 1.0)}x"
     )
+    ws_mode = "Standardpfad" if is_default_workspace else "Explizites --workspace"
+    legacy_block = ""
+    if isinstance(legacy_workspace, dict) and legacy_workspace.get("found"):
+        legacy_block = (
+            f"  Altbestand      : {legacy_workspace['path']} erkannt "
+            f"({legacy_workspace.get('documents', 0)} Dok., "
+            f"{legacy_workspace.get('runs', 0)} A-Läufe, "
+            f"{legacy_workspace.get('findings', 0)} Findings)\n"
+            f"                    -> Übernahme bei geschlossenem Studio per Kopie nach\n"
+            f"                       {workspace_root} möglich (workspace-r12 bleibt erhalten).\n"
+        )
     sep = "=" * 78
     print(
         f"\n{sep}\n"
         f"  UX-mAInd Studio · Quellengebundene Usability-Synthese\n"
         f"  URL             : http://127.0.0.1:{port}\n"
-        f"  Arbeitsbereich  : {workspace_root}\n"
+        f"  Arbeitsbereich  : {workspace_root} ({ws_mode})\n"
+        f"{legacy_block}"
         f"  Ausgabeordner   : {output_dir}\n"
         f"  API-Umgebung    : {envs_txt}\n"
         f"  Aktive Rollen   : {roles_txt}\n"

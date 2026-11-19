@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1120" width="1800" height="1120">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 1390" width="1860" height="1390">
 
   <defs>
     <style>
@@ -13,6 +13,7 @@
       .box-amber { fill: #fffbeb; stroke: #d97706; stroke-width: 1.8; rx: 10; ry: 10; }
       .box-emerald { fill: #ecfdf5; stroke: #059669; stroke-width: 1.8; rx: 10; ry: 10; }
       .box-rose { fill: #fff1f2; stroke: #e11d48; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-violet { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.9; rx: 10; ry: 10; }
       .box-slate { fill: #f1f5f9; stroke: #64748b; stroke-width: 1.6; rx: 10; ry: 10; }
       .lane { fill: #f1f5f9; stroke: #cbd5e1; stroke-width: 1.2; stroke-dasharray: 5 4; rx: 14; ry: 14; }
       .box-head { font: 700 13.5px 'Segoe UI', Inter, system-ui, sans-serif; fill: #0f172a; }
@@ -22,7 +23,11 @@
       .edge { stroke: #475569; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
       .edge-teal { stroke: #0d9488; stroke-width: 2.0; fill: none; marker-end: url(#arrow-teal); }
       .edge-amber { stroke: #d97706; stroke-width: 1.9; stroke-dasharray: 6 4; fill: none; marker-end: url(#arrow-amber); }
+      .edge-ext { stroke: #0284c7; stroke-width: 2.1; stroke-dasharray: 8 4; fill: none; marker-end: url(#arrow-sky); }
+      .edge-file { stroke: #7c3aed; stroke-width: 2.4; stroke-dasharray: 3 3; fill: none; marker-end: url(#arrow-violet); }
       .edge-label { font: 600 11px 'Segoe UI', Inter, system-ui, sans-serif; fill: #334155; }
+      .legend-box { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.2; rx: 8; ry: 8; }
+      .legend-txt { font: 600 11px 'Segoe UI', Inter, system-ui, sans-serif; fill: #1e293b; }
     </style>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
@@ -33,190 +38,253 @@
     <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M 0 1 L 10 5 L 0 9 z" fill="#d97706" />
     </marker>
+    <marker id="arrow-sky" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284c7" />
+    </marker>
+    <marker id="arrow-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#7c3aed" />
+    </marker>
   </defs>
 
-  <rect x="0" y="0" width="1800" height="1120" class="bg" />
-  <text x="32" y="42" class="title">UX-mAInd Studio (R30) — Gesamtarchitektur &amp; Quellengebundener Datenfluss</text>
-  <text x="32" y="65" class="subtitle">Vollständige Open-Source-Pipeline auf Basis von Docling, Docling Core, Docling Graph, LiteLLM, SQLite WAL und React 19</text>
-  <rect x="24" y="86" width="1752" height="225" class="lane" />
-<text x="42" y="110" class="lane-title">EBENE 1 · LOKALE ERSCHLIESSUNG &amp; OPT. VISION-ANREICHERUNG (KEIN EXTERNER TEXTABFLUSS IN STUFE 01)</text>
-<rect x="24" y="330" width="1752" height="260" class="lane" />
-<text x="42" y="354" class="lane-title">EBENE 2 · STUFE A: DOKUMENTGEBUNDENE EVIDENZEXTRAKTION &amp; DETERMINISTISCHES RE-GROUNDING</text>
-<rect x="24" y="608" width="1752" height="240" class="lane" />
-<text x="42" y="632" class="lane-title">EBENE 3 · STUFEN B &amp; C: DOKUMENTÜBERGREIFENDE TRIANGULATION, EPISTEMIK &amp; PERSISTENZ</text>
-<rect x="24" y="866" width="1752" height="230" class="lane" />
-<text x="42" y="890" class="lane-title">EBENE 4 · FORSCHUNGSOBERFLÄCHE (REACT 19 STUDIO), DUAL-VIEW-INSPEKTOR &amp; A4-ÜBERGABE</text>
-<rect x="42" y="126" width="360" height="165" class="box-slate" />
-<rect x="336" y="137" width="54" height="20" rx="5" fill="#475569" />
-<text x="363" y="151" text-anchor="middle" class="badge">INPUT</text>
-<text x="56" y="152" class="box-head">Heterogener Studienkorpus</text>
-<text x="56" y="171" class="box-code">workspace.import_paths() · SHA-256</text>
-<text x="56" y="191" class="box-text">• PDF, DOCX, PPTX, ODT, XLSX, CSV</text>
-<text x="56" y="209" class="box-text">• WebVTT, Markdown, HTML, TXT, PNG/JPG</text>
-<text x="56" y="227" class="box-text">• Frei gewählter Ordner ohne Pflicht-Whitelist</text>
-<text x="56" y="245" class="box-text">• Unveränderte Kopie in work/stored/</text>
-<rect x="452" y="126" width="420" height="165" class="box-teal" />
-<rect x="806" y="137" width="54" height="20" rx="5" fill="#0d9488" />
-<text x="833" y="151" text-anchor="middle" class="badge">LOKAL</text>
-<text x="466" y="152" class="box-head">Stufe 01 · Lokale Docling-Struktur</text>
-<text x="466" y="171" class="box-code">DocumentConverter · PdfPipelineOptions · office.py</text>
-<text x="466" y="191" class="box-text">• Layout, TableFormer (FAST/ACCURATE), RapidOCR</text>
-<text x="466" y="209" class="box-text">• PPTX/DOCX Durchstreichungen &amp; Vortragsnotizen</text>
-<text x="466" y="227" class="box-text">• LibreOffice Ganzfolien-Render (slide_context)</text>
-<text x="466" y="245" class="box-text">• Basis-DoclingDocument JSON (work/native/)</text>
-<rect x="922" y="126" width="410" height="165" class="box-sky" />
-<rect x="1264" y="137" width="56" height="20" rx="5" fill="#0284c7" />
-<text x="1292" y="151" text-anchor="middle" class="badge">VISION</text>
-<text x="936" y="152" class="box-head">Stufe 02 · Visuelle Analyse (Optional)</text>
-<text x="936" y="171" class="box-code">enrichment.py · PictureDescriptionApiOptions</text>
-<text x="936" y="191" class="box-text">• Explizite Pixel-Freigabe (send_pixels=True)</text>
-<text x="936" y="209" class="box-text">• VLM-Bildbeschreibung &amp; Chart-Tabellenextraktion</text>
-<text x="936" y="227" class="box-text">• Editierbarer Basis-Prompt + Zusatzhinweise</text>
-<text x="936" y="245" class="box-text">• Neue versionierte DoclingDocument-Fassung</text>
-<rect x="1382" y="126" width="372" height="165" class="box" />
-<rect x="1686" y="137" width="56" height="20" rx="5" fill="#334155" />
-<text x="1714" y="151" text-anchor="middle" class="badge">CONFIG</text>
-<text x="1396" y="152" class="box-head">Dynamischer Modellkatalog &amp; Profile</text>
-<text x="1396" y="171" class="box-code">models.py · LiteLLM · /v1/models · Vision-Probe</text>
-<text x="1396" y="191" class="box-text">• FAU NHR, Ollama, Gemini, OpenRouter, Custom</text>
-<text x="1396" y="209" class="box-text">• Multimodal-Erkennung (z.B. Qwen3.6-35B-A3B)</text>
-<text x="1396" y="227" class="box-text">• Live 1×1 PNG Vision-Probe &amp; echte Tarife</text>
-<text x="1396" y="245" class="box-text">• 0,00 € für FAU/Lokal · null ohne Schätzpreis</text>
-<line x1="402" y1="208" x2="452" y2="208" class="edge" />
-<text x="427" y="201" text-anchor="middle" class="edge-label">Original</text>
-<line x1="872" y1="208" x2="922" y2="208" class="edge-teal" />
-<text x="897" y="201" text-anchor="middle" class="edge-label">Bilder/Folien</text>
-<rect x="42" y="372" width="390" height="196" class="box-teal" />
-<rect x="366" y="383" width="54" height="20" rx="5" fill="#0d9488" />
-<text x="393" y="397" text-anchor="middle" class="badge">PREP</text>
-<text x="56" y="398" class="box-head">Modell-Quellaufbereitung (Stufe A)</text>
-<text x="56" y="417" class="box-code">evidence.model_source() · DocLang / Markdown</text>
-<text x="56" y="437" class="box-text">• Temporäre Tabellen-Captions [source_ref=#/tables/i]</text>
-<text x="56" y="455" class="box-text">• Spaltenköpfe + Worksheet-Kontext sichtbar</text>
-<text x="56" y="473" class="box-text">• GRADING_SCALE &amp; FormItems verlustfrei</text>
-<text x="56" y="491" class="box-text">• Original-DoclingDocument bleibt unberührt</text>
-<rect x="482" y="372" width="410" height="196" class="box-teal" />
-<rect x="817" y="383" width="63" height="20" rx="5" fill="#0d9488" />
-<text x="849" y="397" text-anchor="middle" class="badge">STUFE A</text>
-<text x="496" y="398" class="box-head">Stufe A · Evidenzextraktion (Docling-Graph)</text>
-<text x="496" y="417" class="box-code">native_graph.py · UXEvidenceDocument</text>
-<text x="496" y="437" class="box-text">• Feldtexte &lt;= 240 Zeichen (0 Schema-Trunkierung)</text>
-<text x="496" y="455" class="box-text">• httpx.Timeout + Stream-Idle-Watchdog + Live-Konsole</text>
-<text x="496" y="473" class="box-text">• Extrahiert Zitate, Messwerte, Skalenpolung, Kontext</text>
-<text x="496" y="491" class="box-text">• Erkennt SCHEMA_SALVAGED &amp; reasoning_tokens</text>
-<rect x="942" y="372" width="410" height="196" class="box-emerald" />
-<rect x="1284" y="383" width="56" height="20" rx="5" fill="#059669" />
-<text x="1312" y="397" text-anchor="middle" class="badge">VERIFY</text>
-<text x="956" y="398" class="box-head">Deterministisches Re-Grounding</text>
-<text x="956" y="417" class="box-code">evidence.Sources.locate() · observation_view()</text>
-<text x="956" y="437" class="box-text">• 1. Exakter Span · 2. Ligaturen (ﬁ/ﬂ) &amp; Trennstriche</text>
-<text x="956" y="455" class="box-text">• 3. Wortgrenzen (&#x27;5%&#x27; matcht niemals in &#x27;15%&#x27;)</text>
-<text x="956" y="473" class="box-text">• 4. Verbundene Tabellenzellen &amp; Zitatlisten („...“)</text>
-<text x="956" y="491" class="box-text">• Kandidaten-Anker + ambiguous_count bei Mehrdeutigkeit</text>
-<rect x="1402" y="372" width="352" height="196" class="box-amber" />
-<rect x="1688" y="383" width="54" height="20" rx="5" fill="#d97706" />
-<text x="1715" y="397" text-anchor="middle" class="badge">GATE</text>
-<text x="1416" y="398" class="box-head">Stufe-A-Gatekeeper &amp; Heilung</text>
-<text x="1416" y="417" class="box-code">a_status.dimensions() · exclusion_reasons</text>
-<text x="1416" y="437" class="box-text">• Trennt zitierbare vs. ausgeschlossene Belege</text>
-<text x="1416" y="455" class="box-text">• Transparente Ausschlussgründe im Popover</text>
-<text x="1416" y="473" class="box-text">• 1-Klick Kandidaten-Heilung durch Forscher</text>
-<text x="1416" y="491" class="box-text">• Carry-Forward bestätigter Entscheidungen</text>
-<path d="M 662 291 L 662 315 L 237 315 L 237 372" class="edge-teal" />
-<text x="450" y="311" text-anchor="middle" class="edge-label">DoclingDocument</text>
-<path d="M 1127 291 L 1127 315 L 237 315 L 237 372" class="edge-teal" />
-<line x1="432" y1="470" x2="482" y2="470" class="edge" />
-<text x="457" y="463" text-anchor="middle" class="edge-label">DocLang/MD</text>
-<line x1="892" y1="470" x2="942" y2="470" class="edge" />
-<text x="917" y="463" text-anchor="middle" class="edge-label">Roh-JSON</text>
-<line x1="1352" y1="470" x2="1402" y2="470" class="edge-teal" />
-<text x="1377" y="463" text-anchor="middle" class="edge-label">SOURCE_RESOLVED</text>
-<rect x="42" y="648" width="400" height="180" class="box-amber" />
-<rect x="367" y="659" width="63" height="20" rx="5" fill="#d97706" />
-<text x="399" y="673" text-anchor="middle" class="badge">HANDOFF</text>
-<text x="56" y="674" class="box-head">Reiner JSON-Synthese-Handoff</text>
-<text x="56" y="693" class="box-code">interpretation._build_synthesis_document()</text>
-<text x="56" y="713" class="box-text">• Reine Daten in evidence.json (ohne Prompt-Mischung)</text>
-<text x="56" y="731" class="box-text">• Sprach-/Zusatzregeln strikt in system_appendix</text>
-<text x="56" y="749" class="box-text">• Übergibt numeric_value, scale_direction, outline,</text>
-<text x="56" y="767" class="box-text">  track, strikethrough_spans &amp; Mehrzeilen-Tabellen</text>
-<rect x="492" y="648" width="390" height="180" class="box-amber" />
-<rect x="807" y="659" width="63" height="20" rx="5" fill="#d97706" />
-<text x="839" y="673" text-anchor="middle" class="badge">STUFE B</text>
-<text x="506" y="674" class="box-head">Stufe B · Dokumentübergreifende Relationen</text>
-<text x="506" y="693" class="box-code">UXRelationProposals · structured_sparse_check=False</text>
-<text x="506" y="713" class="box-text">• Verbindet Beobachtungen über Dateien hinweg</text>
-<text x="506" y="731" class="box-text">• corroborates, contradicts, elaborates, causes</text>
-<text x="506" y="749" class="box-text">• Unterscheidet dokumentintern vs. -übergreifend</text>
-<text x="506" y="767" class="box-text">• Eigener nativer Laufbeleg in SQLite</text>
-<rect x="932" y="648" width="410" height="180" class="box-emerald" />
-<rect x="1267" y="659" width="63" height="20" rx="5" fill="#059669" />
-<text x="1299" y="673" text-anchor="middle" class="badge">STUFE C</text>
-<text x="946" y="674" class="box-head">Stufe C · UX-Findings &amp; Epistemik</text>
-<text x="946" y="693" class="box-code">UXFindingProposals · research._finding_epistemics()</text>
-<text x="946" y="713" class="box-text">• Supports, Opposes, Qualifies + Nielsen/ISO-Heuristik</text>
-<text x="946" y="731" class="box-text">• Prüft alle 4 Rollenlisten &amp; verworfene Stützbelege</text>
-<text x="946" y="749" class="box-text">• Dedupliziert Folienrender-Überlappung + Sprecherzahl</text>
-<text x="946" y="767" class="box-text">• Unabhängigkeitsmaße pro Finding</text>
-<rect x="1392" y="648" width="362" height="180" class="box-slate" />
-<rect x="1658" y="659" width="84" height="20" rx="5" fill="#475569" />
-<text x="1700" y="673" text-anchor="middle" class="badge">SQLITE WAL</text>
-<text x="1406" y="674" class="box-head">SQLite WAL Workspace &amp; Audit-Ledger</text>
-<text x="1406" y="693" class="box-code">workspace.db · files / runs / ux_objects / ux_decisions</text>
-<text x="1406" y="713" class="box-text">• KI-Rohvorschläge niemals überschrieben</text>
-<text x="1406" y="731" class="box-text">• Forscher-Review: confirmed, corrected, rejected</text>
-<text x="1406" y="749" class="box-text">• Rekonstruiert kompletten Job-Verlauf aus SQLite</text>
-<text x="1406" y="767" class="box-text">• Revisionssichere Basis- &amp; Lauf-Versionierung</text>
-<path d="M 1578 568 L 1578 594 L 242 594 L 242 648" class="edge-teal" />
-<text x="910" y="590" text-anchor="middle" class="edge-label">Nur verankerte A-Basis</text>
-<line x1="442" y1="738" x2="492" y2="738" class="edge" />
-<text x="467" y="731" text-anchor="middle" class="edge-label">evidence.json</text>
-<line x1="882" y1="738" x2="932" y2="738" class="edge" />
-<text x="907" y="731" text-anchor="middle" class="edge-label">A + Relationen B</text>
-<line x1="1342" y1="738" x2="1392" y2="738" class="edge" />
-<text x="1367" y="731" text-anchor="middle" class="edge-label">Persistenz</text>
-<rect x="42" y="908" width="400" height="168" class="box" />
-<rect x="374" y="919" width="56" height="20" rx="5" fill="#0f766e" />
-<text x="402" y="933" text-anchor="middle" class="badge">VIEW 3</text>
-<text x="56" y="934" class="box-head">Synthese-Workbench &amp; Modell-Telemetrie</text>
-<text x="56" y="953" class="box-code">SynthesisView · StudyAnalyticsView · telemetry.py</text>
-<text x="56" y="973" class="box-text">• Master-Detail-Prüfung mit Korrekturleitfaden</text>
-<text x="56" y="991" class="box-text">• Triangulations-Matrix (ohne verworfene Vorschläge)</text>
-<text x="56" y="1009" class="box-text">• Modell-Evaluationsmatrix (Ertrag, Anker-%, Tokens)</text>
-<text x="56" y="1027" class="box-text">• CSV-Export für Kapitel Evaluation der BA</text>
-<rect x="492" y="908" width="410" height="168" class="box" />
-<rect x="834" y="919" width="56" height="20" rx="5" fill="#0284c7" />
-<text x="862" y="933" text-anchor="middle" class="badge">VIEW 4</text>
-<text x="506" y="934" class="box-head">Interaktiver Evidenz- &amp; Wissensgraph</text>
-<text x="506" y="953" class="box-code">GraphView (@xyflow/react + Dagre) · MiniMap</text>
-<text x="506" y="973" class="box-text">• Modi: Findings-Ketten, Gesamtnetz, Gegenbelege, Visuell</text>
-<text x="506" y="991" class="box-text">• Dokumentquellen- &amp; Bildquellen-Hubs für alle Formate</text>
-<text x="506" y="1009" class="box-text">• Freies Drag &amp; Drop + farbige MiniMap ab 1 Knoten</text>
-<text x="506" y="1027" class="box-text">• Fehlerhafte KI-Kanten per Klick ‚Verbindung lösen‘</text>
-<rect x="952" y="908" width="410" height="168" class="box" />
-<rect x="1294" y="919" width="56" height="20" rx="5" fill="#059669" />
-<text x="1322" y="933" text-anchor="middle" class="badge">VIEW 5</text>
-<text x="966" y="934" class="box-head">Synchroner Dual-View-Quelleninspektor</text>
-<text x="966" y="953" class="box-code">InspectorView · PDF.js + DoclingReader + docling-img</text>
-<text x="966" y="973" class="box-text">• Aktive Finding-Belegleiste zum Durchklicken aller Zitate</text>
-<text x="966" y="991" class="box-text">• Rückkopplungsfreie PDF/PPTX-Seitensynchronisation</text>
-<text x="966" y="1009" class="box-text">• Volle Tabellen, Streichungen, Notizen &amp; SVG-Boxen</text>
-<text x="966" y="1027" class="box-text">• Protokollierter Modell-Input &amp; .MD / JSON Export</text>
-<rect x="1412" y="908" width="342" height="168" class="box-emerald" />
-<rect x="1686" y="919" width="56" height="20" rx="5" fill="#059669" />
-<text x="1714" y="933" text-anchor="middle" class="badge">EXPORT</text>
-<text x="1426" y="934" class="box-head">Druckbares A4-Handout &amp; Handbuch</text>
-<text x="1426" y="953" class="box-code">html_handout() · USER_MANUAL.md · SYSTEM_LIMITS.md</text>
-<text x="1426" y="973" class="box-text">• Druckfertiges A4-Übergabedokument (Strg+P / PDF)</text>
-<text x="1426" y="991" class="box-text">• Zeigt bestätigte/korrigierte Findings + Zitatbelege</text>
-<text x="1426" y="1009" class="box-text">• Verworfene KI-Vorschläge sauber abgetrennt</text>
-<text x="1426" y="1027" class="box-text">• In-App Handbuch &amp; ehrliche Systemgrenzen</text>
-<path d="M 1137 828 L 1137 854 L 242 854 L 242 908" class="edge" />
-<path d="M 1137 828 L 1137 854 L 697 854 L 697 908" class="edge" />
-<line x1="442" y1="992" x2="492" y2="992" class="edge" />
-<text x="467" y="985" text-anchor="middle" class="edge-label">Fokus</text>
-<line x1="902" y1="992" x2="952" y2="992" class="edge-teal" />
-<text x="927" y="985" text-anchor="middle" class="edge-label">Belegkette</text>
-<line x1="1362" y1="992" x2="1412" y2="992" class="edge" />
-<text x="1387" y="985" text-anchor="middle" class="edge-label">Übergabe</text>
+  <rect x="0" y="0" width="1860" height="1390" class="bg" />
+  <text x="32" y="42" class="title">UX-mAInd Studio — Vollständige Gesamtarchitektur: Import, Docling, Re-Grounding, Dual-View, Zweitprüfung &amp; Export</text>
+  <text x="32" y="65" class="subtitle">Durchgängiger quellengebundener Datenfluss mit dauerhaftem Arbeitsordner, 1-/2-Rechner-Zweitprüfung und strikter Trennung lokaler vs. optionaler externer Aufrufe</text>
+  <rect x="1006" y="20" width="830" height="48" class="legend-box" />
+<line x1="1022" y1="44" x2="1068" y2="44" class="edge-teal" />
+<text x="1076" y="48" class="legend-txt">Lokaler In-App-Fluss (SQLite / 127.0.0.1)</text>
+<line x1="1324" y1="44" x2="1370" y2="44" class="edge-ext" />
+<text x="1378" y="48" class="legend-txt">Opt. externer Modellaufruf (oder lokal Ollama)</text>
+<line x1="1646" y1="44" x2="1692" y2="44" class="edge-file" />
+<text x="1700" y="48" class="legend-txt">Lokaler Dateitransfer</text>
+<rect x="24" y="86" width="1812" height="225" class="lane" />
+<text x="42" y="110" class="lane-title">EBENE 1 · ARBEITSORDNER, DOKUMENTIMPORT, LOKALE DOCLING-STRUKTUR &amp; OPTIONALE VISION-ANREICHERUNG</text>
+<rect x="24" y="328" width="1812" height="252" class="lane" />
+<text x="42" y="352" class="lane-title">EBENE 2 · STUFE A: MODELLAUFRUF (LOKAL ODER OPT. EXTERN) &amp; 7-STUFIGE DETERMINISTISCHE QUELLENRÜCKBINDUNG</text>
+<rect x="24" y="598" width="1812" height="236" class="lane" />
+<text x="42" y="622" class="lane-title">EBENE 3 · STUFEN B &amp; C: TRIANGULATION, EPISTEMIK &amp; PERSISTENTE SPEICHERUNG (SQLITE WAL)</text>
+<rect x="24" y="852" width="1812" height="228" class="lane" />
+<text x="42" y="876" class="lane-title">EBENE 4 · SYNCHRONER DUAL-VIEW-QUELLENINSPEKTOR, WISSENSGRAPH &amp; EINZELPRÜFUNG</text>
+<rect x="24" y="1098" width="1812" height="260" class="lane" />
+<text x="42" y="1122" class="lane-title">EBENE 5 · OPTIONALE UNABHÄNGIGE ZWEITPRÜFUNG (1 RECHNER &amp; 2 RECHNER), STUDIENSTAND-ÜBERNAHME &amp; EXPORTE</text>
+<rect x="42" y="126" width="380" height="165" class="box-slate" />
+<rect x="356" y="137" width="54" height="20" rx="5" fill="#475569" />
+<text x="383" y="151" text-anchor="middle" class="badge">INPUT</text>
+<text x="56" y="152" class="box-head">Arbeitsordner &amp; Studienkorpus-Import</text>
+<text x="56" y="171" class="box-code">%LOCALAPPDATA%\UX-mAInd\workspace · --workspace</text>
+<text x="56" y="191" class="box-text">• PDF, DOCX, PPTX, ODT, XLSX, CSV, VTT, MD, TXT</text>
+<text x="56" y="209" class="box-text">• Erkennt workspace-r12 (Übernahme per Kopie)</text>
+<text x="56" y="227" class="box-text">• --workspace Vorrang für isolierte Tests/Dev</text>
+<text x="56" y="245" class="box-text">• Unveränderte Originale per SHA-256 (stored/)</text>
+<rect x="468" y="126" width="420" height="165" class="box-teal" />
+<rect x="792" y="137" width="84" height="20" rx="5" fill="#0d9488" />
+<text x="834" y="151" text-anchor="middle" class="badge">100% LOKAL</text>
+<text x="482" y="152" class="box-head">Stufe 01 · Lokale Docling-Struktur</text>
+<text x="482" y="171" class="box-code">DocumentConverter · PdfPipelineOptions · office.py</text>
+<text x="482" y="191" class="box-text">• Layout, TableFormer (FAST/ACCURATE), RapidOCR</text>
+<text x="482" y="209" class="box-text">• PPTX/DOCX Durchstreichungen &amp; Vortragsnotizen</text>
+<text x="482" y="227" class="box-text">• Opt. LibreOffice Anzeige-PDF &amp; Ganzfolien (display/)</text>
+<text x="482" y="245" class="box-text">• Basis-DoclingDocument JSON (native/document.json)</text>
+<rect x="934" y="126" width="420" height="165" class="box-sky" />
+<rect x="1251" y="137" width="91" height="20" rx="5" fill="#0284c7" />
+<text x="1297" y="151" text-anchor="middle" class="badge">OPT. VISION</text>
+<text x="948" y="152" class="box-head">Stufe 02 · Visuelle Analyse (Optional)</text>
+<text x="948" y="171" class="box-code">enrichment.py · PictureDescriptionApiOptions</text>
+<text x="948" y="191" class="box-text">• Explizite Freigabe (send_pixels=True erforderlich)</text>
+<text x="948" y="209" class="box-text">• VLM-Bildbeschreibung &amp; Chart2CSV-Extraktion</text>
+<text x="948" y="227" class="box-text">• Lokal (Ollama) oder opt. externes VLM-Gateway</text>
+<text x="948" y="245" class="box-text">• Eigene SHA-256-Version unter native/enrichment/</text>
+<rect x="1400" y="126" width="416" height="165" class="box-sky" />
+<rect x="1734" y="137" width="70" height="20" rx="5" fill="#0284c7" />
+<text x="1769" y="151" text-anchor="middle" class="badge">OPT. LLM</text>
+<text x="1414" y="152" class="box-head">Modellzugang &amp; LiteLLM-Gateway (Optional extern)</text>
+<text x="1414" y="171" class="box-code">models.py · LiteLLM · Lokal (Ollama) / NHR@FAU / API</text>
+<text x="1414" y="191" class="box-text">• 100 % lokal (Ollama/vLLM) ODER opt. HTTPS-API</text>
+<text x="1414" y="209" class="box-text">• Getrennte Anzeige: Hardware / Planung / Wire</text>
+<text x="1414" y="227" class="box-text">• 0,00 € FAU &amp; Lokal · echte Tarife ohne Schätzung</text>
+<text x="1414" y="245" class="box-text">• Zweitprüfung auf Rechner 2 benötigt 0 Modellaufrufe!</text>
+<line x1="422" y1="208" x2="468" y2="208" class="edge" />
+<text x="445" y="201" text-anchor="middle" class="edge-label">Original</text>
+<line x1="888" y1="208" x2="934" y2="208" class="edge-teal" />
+<text x="911" y="201" text-anchor="middle" class="edge-label">Bilder/Folien</text>
+<line x1="1354" y1="208" x2="1400" y2="208" class="edge-ext" />
+<text x="1377" y="201" text-anchor="middle" class="edge-label">Opt. VLM-Call</text>
+<rect x="42" y="368" width="390" height="192" class="box-teal" />
+<rect x="366" y="379" width="54" height="20" rx="5" fill="#0d9488" />
+<text x="393" y="393" text-anchor="middle" class="badge">PREP</text>
+<text x="56" y="394" class="box-head">Modell-Quellaufbereitung (Stufe A)</text>
+<text x="56" y="413" class="box-code">evidence.model_source() · DocLang / Markdown</text>
+<text x="56" y="433" class="box-text">• Temporäre Tabellen-Captions [source_ref=#/tables/i]</text>
+<text x="56" y="451" class="box-text">• Spaltenköpfe + Worksheet-Kontext + TrackSource</text>
+<text x="56" y="469" class="box-text">• GRADING_SCALE, KeyValueItem &amp; FormItem sichtbar</text>
+<text x="56" y="487" class="box-text">• Original-DoclingDocument bleibt unberührt</text>
+<rect x="482" y="368" width="420" height="192" class="box-sky" />
+<rect x="827" y="379" width="63" height="20" rx="5" fill="#0284c7" />
+<text x="859" y="393" text-anchor="middle" class="badge">STUFE A</text>
+<text x="496" y="394" class="box-head">Stufe A · Evidenzextraktion (Docling-Graph)</text>
+<text x="496" y="413" class="box-code">native_graph.py · UXEvidenceDocument</text>
+<text x="496" y="433" class="box-text">• Schema-Regeln &lt;= 240 Zeichen (0 Trunkierung)</text>
+<text x="496" y="451" class="box-text">• httpx.Timeout + Stream-Idle-Watchdog + Live-Log</text>
+<text x="496" y="469" class="box-text">• Lokal (Ollama) oder opt. externer Modellaufruf</text>
+<text x="496" y="487" class="box-text">• Zitate, Messwerte, Skalenpolung &amp; Sprecherrolle</text>
+<rect x="952" y="368" width="420" height="192" class="box-emerald" />
+<rect x="1283" y="379" width="77" height="20" rx="5" fill="#059669" />
+<text x="1322" y="393" text-anchor="middle" class="badge">RE-GROUND</text>
+<text x="966" y="394" class="box-head">7-Stufige Deterministische Quellenrückbindung</text>
+<text x="966" y="413" class="box-code">evidence.Sources.locate() · observation_view()</text>
+<text x="966" y="433" class="box-text">• Exakter Span, PDF-Ligaturen (ﬁ/ﬂ) &amp; Silbentrennung</text>
+<text x="966" y="451" class="box-text">• Wortgrenzen (&#x27;5%&#x27; != &#x27;15%&#x27;) &amp; Tabellenzellen</text>
+<text x="966" y="469" class="box-text">• Generiert deterministische evidence_id pro Anker</text>
+<text x="966" y="487" class="box-text">• Mehrdeutige Treffer bleiben offen (candidate_anchors)</text>
+<rect x="1422" y="368" width="394" height="192" class="box-amber" />
+<rect x="1750" y="379" width="54" height="20" rx="5" fill="#d97706" />
+<text x="1777" y="393" text-anchor="middle" class="badge">GATE</text>
+<text x="1436" y="394" class="box-head">Stufe-A-Gatekeeper &amp; Belegheilung</text>
+<text x="1436" y="413" class="box-code">a_status.dimensions() · exclusion_reasons</text>
+<text x="1436" y="433" class="box-text">• Trennt zitierbare (SOURCE_RESOLVED) vs. offene Belege</text>
+<text x="1436" y="451" class="box-text">• 1-Klick Kandidaten-Heilung durch Forscher</text>
+<text x="1436" y="469" class="box-text">• Codebook-Schutz (corpus_role=&#x27;reference&#x27;)</text>
+<text x="1436" y="487" class="box-text">• Carry-Forward bestätigter Entscheidungen</text>
+<path d="M 678 291 L 678 314 L 237 314 L 237 368" class="edge-teal" />
+<text x="460" y="310" text-anchor="middle" class="edge-label">DoclingDocument</text>
+<path d="M 1608 291 L 1608 344 L 692 344 L 692 368" class="edge-ext" />
+<text x="1150" y="340" text-anchor="middle" class="edge-label">Opt. LLM-API / Ollama</text>
+<line x1="432" y1="464" x2="482" y2="464" class="edge-teal" />
+<text x="457" y="457" text-anchor="middle" class="edge-label">DocLang/MD</text>
+<line x1="902" y1="464" x2="952" y2="464" class="edge" />
+<text x="927" y="457" text-anchor="middle" class="edge-label">Roh-JSON</text>
+<line x1="1372" y1="464" x2="1422" y2="464" class="edge-teal" />
+<text x="1397" y="457" text-anchor="middle" class="edge-label">SOURCE_RESOLVED</text>
+<rect x="42" y="638" width="400" height="178" class="box-amber" />
+<rect x="367" y="649" width="63" height="20" rx="5" fill="#d97706" />
+<text x="399" y="663" text-anchor="middle" class="badge">HANDOFF</text>
+<text x="56" y="664" class="box-head">Reiner JSON-Synthese-Handoff</text>
+<text x="56" y="683" class="box-code">interpretation._build_synthesis_document()</text>
+<text x="56" y="703" class="box-text">• Reine Daten in evidence.json (0 Prompt-Mischung)</text>
+<text x="56" y="721" class="box-text">• Sprach-/Zusatzregeln strikt in system_appendix</text>
+<text x="56" y="739" class="box-text">• Übergibt numeric_value, scale_direction, outline,</text>
+<text x="56" y="757" class="box-text">  track, strikethrough_spans &amp; Tabellenkontext</text>
+<rect x="492" y="638" width="400" height="178" class="box-sky" />
+<rect x="826" y="649" width="54" height="20" rx="5" fill="#0284c7" />
+<text x="853" y="663" text-anchor="middle" class="badge">B &amp; C</text>
+<text x="506" y="664" class="box-head">Stufe B · Relationen &amp; Stufe C · UX-Findings</text>
+<text x="506" y="683" class="box-code">UXRelationProposals · UXFindingProposals</text>
+<text x="506" y="703" class="box-text">• B: corroborates, contradicts, elaborates, causes</text>
+<text x="506" y="721" class="box-text">• C: Findings inkl. Gegenbelege &amp; Nielsen/ISO/WCAG</text>
+<text x="506" y="739" class="box-text">• Epistemik: Sprecherzahl &amp; Folien-Überlappung</text>
+<text x="506" y="757" class="box-text">• Lokal (Ollama) oder opt. externer Modellaufruf</text>
+<rect x="942" y="638" width="430" height="178" class="box-slate" />
+<rect x="1276" y="649" width="84" height="20" rx="5" fill="#475569" />
+<text x="1318" y="663" text-anchor="middle" class="badge">SQLITE WAL</text>
+<text x="956" y="664" class="box-head">SQLite WAL Speicherung &amp; Prüfer-Profile</text>
+<text x="956" y="683" class="box-code">workspace.sqlite · auth.py (ReviewerIdentityProvider)</text>
+<text x="956" y="703" class="box-text">• Tabellen: documents, runs, ux_objects, ux_decisions,</text>
+<text x="956" y="721" class="box-text">  ux_review_sessions, workspace_settings, profiles</text>
+<text x="956" y="739" class="box-text">• Lokale Profile (Name/Kürzel, 0 Cloud-/Login-Zwang)</text>
+<text x="956" y="757" class="box-text">• Architektur-Hook: ReviewerIdentityProvider (SSO/OIDC)</text>
+<rect x="1422" y="638" width="394" height="178" class="box-teal" />
+<rect x="1720" y="649" width="84" height="20" rx="5" fill="#0d9488" />
+<text x="1762" y="663" text-anchor="middle" class="badge">PERSISTENT</text>
+<text x="1436" y="664" class="box-head">Neustartfester Zustand &amp; Lauf-Rekonstruktion</text>
+<text x="1436" y="683" class="box-code">library.paths() · terminal_ui.read_job_history()</text>
+<text x="1436" y="703" class="box-text">• Alle Dokumentversionen, Belege, Ersturteile und</text>
+<text x="1436" y="721" class="box-text">  Zwischenstände überleben jeden Neustart verlustfrei</text>
+<text x="1436" y="739" class="box-text">• Zeigt geöffneten Arbeitsordner live in der UI an</text>
+<text x="1436" y="757" class="box-text">• Rekonstruiert kompletten Job-Verlauf aus SQLite</text>
+<path d="M 1619 560 L 1619 586 L 242 586 L 242 638" class="edge-teal" />
+<text x="930" y="582" text-anchor="middle" class="edge-label">Verankerte A-Basis</text>
+<line x1="442" y1="727" x2="492" y2="727" class="edge-ext" />
+<text x="467" y="720" text-anchor="middle" class="edge-label">evidence.json</text>
+<line x1="892" y1="727" x2="942" y2="727" class="edge-teal" />
+<text x="917" y="720" text-anchor="middle" class="edge-label">Laufbelege</text>
+<line x1="1372" y1="727" x2="1422" y2="727" class="edge-teal" />
+<text x="1397" y="720" text-anchor="middle" class="edge-label">WAL Sync</text>
+<rect x="42" y="892" width="430" height="170" class="box" />
+<rect x="355" y="903" width="105" height="20" rx="5" fill="#0f766e" />
+<text x="408" y="917" text-anchor="middle" class="badge">EINZELPRÜFUNG</text>
+<text x="56" y="918" class="box-head">Synthese-Werkbank &amp; Direkte Einzelprüfung</text>
+<text x="56" y="937" class="box-code">SynthesisView.jsx · ResearcherReviewBlock</text>
+<text x="56" y="957" class="box-text">• Normale Einzelprüfung direkt mit Standard-Prüfer</text>
+<text x="56" y="975" class="box-text">  (zweites Profil bleibt 100 % freiwillig!)</text>
+<text x="56" y="993" class="box-text">• Bestätigen, Korrigieren, Verwerfen + Prüfnotiz</text>
+<text x="56" y="1011" class="box-text">• Zustandsfeste Such- &amp; Prüfstatusfilter</text>
+<rect x="522" y="892" width="430" height="170" class="box-teal" />
+<rect x="863" y="903" width="77" height="20" rx="5" fill="#0d9488" />
+<text x="902" y="917" text-anchor="middle" class="badge">DUAL-VIEW</text>
+<text x="536" y="918" class="box-head">Synchroner Dual-View-Quelleninspektor</text>
+<text x="536" y="937" class="box-code">InspectorView.jsx · PDF.js + DoclingReader + docling-img</text>
+<text x="536" y="957" class="box-text">• Links Original-PDF / gecachtes Office-Anzeige-PDF</text>
+<text x="536" y="975" class="box-text">• Rechts Docling-Lesefassung &amp; native BBox-Geometrie</text>
+<text x="536" y="993" class="box-text">• Klickbare Finding-Belegleiste über alle Dokumente</text>
+<text x="536" y="1011" class="box-text">• Funktioniert identisch aus lokalem .zip-Prüfpaket!</text>
+<rect x="1002" y="892" width="400" height="170" class="box" />
+<rect x="1336" y="903" width="54" height="20" rx="5" fill="#0284c7" />
+<text x="1363" y="917" text-anchor="middle" class="badge">GRAPH</text>
+<text x="1016" y="918" class="box-head">Interaktiver Evidenz- &amp; Wissensgraph</text>
+<text x="1016" y="937" class="box-code">GraphView.jsx (@xyflow/react + Dagre) · MiniMap</text>
+<text x="1016" y="957" class="box-text">• Findings-Ketten, Gesamtnetz, Gegenbelege, Visuell</text>
+<text x="1016" y="975" class="box-text">• Respektiert Verblindung während aktiver Zweitprüfung</text>
+<text x="1016" y="993" class="box-text">• Freies Ziehen + 1-Klick ‚Verbindung lösen‘</text>
+<text x="1016" y="1011" class="box-text">• Nahtloser Sprung in die Dual-View-Fundstelle</text>
+<rect x="1452" y="892" width="364" height="170" class="box-slate" />
+<rect x="1750" y="903" width="54" height="20" rx="5" fill="#475569" />
+<text x="1777" y="917" text-anchor="middle" class="badge">DOCS</text>
+<text x="1466" y="918" class="box-head">In-App-Handbuch &amp; Systemgrenzen</text>
+<text x="1466" y="937" class="box-code">docs/USER_MANUAL.md · docs/SYSTEM_LIMITS.md</text>
+<text x="1466" y="957" class="box-text">• Lokal gebündelt (0 Runtime-CDNs)</text>
+<text x="1466" y="975" class="box-text">• Schritt-für-Schritt-Anleitungen für 1 &amp; 2 Rechner</text>
+<text x="1466" y="993" class="box-text">• Ehrliche Abhängigkeits- &amp; Methodik-Grenzen</text>
+<text x="1466" y="1011" class="box-text">• Synchron mit jedem Build aktualisiert</text>
+<path d="M 1157 816 L 1157 840 L 257 840 L 257 892" class="edge-teal" />
+<line x1="472" y1="977" x2="522" y2="977" class="edge-teal" />
+<text x="497" y="970" text-anchor="middle" class="edge-label">Belegsprung</text>
+<line x1="952" y1="977" x2="1002" y2="977" class="edge-teal" />
+<text x="977" y="970" text-anchor="middle" class="edge-label">Netz-Fokus</text>
+<rect x="42" y="1138" width="415" height="200" class="box-violet" />
+<rect x="382" y="1149" width="63" height="20" rx="5" fill="#7c3aed" />
+<text x="414" y="1163" text-anchor="middle" class="badge">BLINDED</text>
+<text x="56" y="1164" class="box-head">1 &amp; 2 · Ausgangsstand &amp; Verblindete Bewertung</text>
+<text x="56" y="1183" class="box-code">dual_review.create_session() · save_judgment() · submit_slot()</text>
+<text x="56" y="1203" class="box-text">• Auswahl der Findings -&gt; friert baseline_sha256 ein</text>
+<text x="56" y="1221" class="box-text">• Weg A (Am selben Rechner): lokaler Profilwechsel</text>
+<text x="56" y="1239" class="box-text">• Weg B (Auf zwei Rechnern): Prüfpaket .zip &amp; Abgabe .json</text>
+<text x="56" y="1257" class="box-text">• Vor Freigabe strikt verblindet (UI, Historie, Exporte)</text>
+<text x="56" y="1275" class="box-text">• Verbindliche Abgabe friert Ersturteil unveränderbar ein</text>
+<rect x="502" y="1138" width="420" height="200" class="box-amber" />
+<rect x="847" y="1149" width="63" height="20" rx="5" fill="#d97706" />
+<text x="879" y="1163" text-anchor="middle" class="badge">RELEASE</text>
+<text x="516" y="1164" class="box-head">3 · Freigabe nach beiden Abgaben &amp; Überarbeitung</text>
+<text x="516" y="1183" class="box-code">release_comparison() · export_comparison_json()</text>
+<text x="516" y="1203" class="box-text">• Sperre: Freigabe erst möglich, wenn Abgabe 1 UND 2 da</text>
+<text x="516" y="1221" class="box-text">• Zeigt Ersturteile, Begründungen &amp; Feld-Diffs nebeneinander</text>
+<text x="516" y="1239" class="box-text">• Auf 2 Rechnern: Rückgabe ux-vergleich-&lt;id&gt;.json an R2</text>
+<text x="516" y="1257" class="box-text">• Optionale Folgebewertung (phase=&#x27;revision&#x27;) möglich;</text>
+<text x="516" y="1275" class="box-text">  abgegebenes Ersturteil (phase=&#x27;initial&#x27;) bleibt erhalten!</text>
+<rect x="967" y="1138" width="415" height="200" class="box-emerald" />
+<rect x="1316" y="1149" width="54" height="20" rx="5" fill="#059669" />
+<text x="1343" y="1163" text-anchor="middle" class="badge">ADOPT</text>
+<text x="981" y="1164" class="box-head">4 · Ausdrückliche Übernahme in den Studienstand</text>
+<text x="981" y="1183" class="box-code">adopt_resolution() · ADOPTED / OPEN_DISAGREEMENT</text>
+<text x="981" y="1203" class="box-text">• Auswahl bei Abweichung: Fassung Prüfer 1, Prüfer 2,</text>
+<text x="981" y="1221" class="box-text">  Ausgangsvorschlag oder gemeinsame Konsensfassung</text>
+<text x="981" y="1239" class="box-text">• Oder bewusst als ‚Offene Abweichung‘ belassen</text>
+<text x="981" y="1257" class="box-text">• Atomarer, idempotenter Datei-Import (0 Duplikate,</text>
+<text x="981" y="1275" class="box-text">  fremde/beschädigte Pakete ändern 0 Daten)</text>
+<rect x="1427" y="1138" width="389" height="200" class="box-emerald" />
+<rect x="1748" y="1149" width="56" height="20" rx="5" fill="#059669" />
+<text x="1776" y="1163" text-anchor="middle" class="badge">EXPORT</text>
+<text x="1441" y="1164" class="box-head">Berichte &amp; Forschungs-JSON-Export</text>
+<text x="1441" y="1183" class="box-code">html_handout() · markdown_report() · /api/ux-export</text>
+<text x="1441" y="1203" class="box-text">• A4-HTML &amp; Markdown nutzen übernommenen Studienstand</text>
+<text x="1441" y="1221" class="box-text">  und markieren offene Abweichungen deutlich sichtbar</text>
+<text x="1441" y="1239" class="box-text">• Forschungs-JSON bewahrt Ersturteile (initial), spätere</text>
+<text x="1441" y="1257" class="box-text">  Änderungen (revisions) &amp; übernommene Fassung komplett</text>
+<text x="1441" y="1275" class="box-text">• Originalbelege &amp; gewählter Laufstand fest verknüpft</text>
+<path d="M 257 1062 L 257 1138" class="edge-teal" />
+<text x="315" y="1094" text-anchor="middle" class="edge-label">Optional starten</text>
+<line x1="457" y1="1238" x2="502" y2="1238" class="edge-file" />
+<text x="479" y="1231" text-anchor="middle" class="edge-label">.zip / .json</text>
+<line x1="922" y1="1238" x2="967" y2="1238" class="edge-teal" />
+<text x="944" y="1231" text-anchor="middle" class="edge-label">Auswahl</text>
+<line x1="1382" y1="1238" x2="1427" y2="1238" class="edge-teal" />
+<text x="1404" y="1231" text-anchor="middle" class="edge-label">Studienstand</text>
 </svg>

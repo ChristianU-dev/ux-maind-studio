@@ -161,12 +161,123 @@ Unter `Einstellungen → Stufen-Prompts` siehst du für **alle 4 KI-Stufen (`Vis
 
 ---
 
-## 7. Betrieb, Prüfer-Profile, 1-Klick-Installation & Server-Deployment
+## 7. Dauerhafter Arbeitsordner, Altbestand (`workspace-r12`) & Schnellstart
 
-- **1-Klick-Installation & App-Fenster-Start (`US-75`):**
-  - **Windows:** `powershell -ExecutionPolicy Bypass -File install.ps1` installiert `.venv` und alle Open-Source-Abhängigkeiten; ein Doppelklick auf `start-ux-maind.cmd` startet Server + eigenständiges Desktop-App-Fenster (`http://127.0.0.1:8465/`).
-  - **Linux / macOS:** `./install.sh` richtet `.venv` ein (`.venv/bin/ux-maind`).
-  - **Container / Docker:** `docker compose up --build` startet das mehrstufig gebaute Image (`Dockerfile` inkl. headless LibreOffice und persistentem `/data/workspace`-Volume).
-- **Wechselbare Prüfer-Profile & optionale OIDC-/Google-Anmeldung (`US-74`):** Über den Prüfer-Chip oben rechts in der Kopfleiste können verschiedene lokale Forscher-Profile (z. B. *Erstprüfer* / *Zweitprüfer*) ohne Login-Zwang gewechselt werden. Jede Prüfentscheidung (`Bestätigen`, `Korrigieren`, `Verwerfen`) stempelt den aktiven Prüfernamen revisionssicher in `ux_decisions.payload.reviewer`. Für gehostete Team-Umgebungen lässt sich optional OpenID Connect / Google OAuth 2.0 über `UX_MAIND_OIDC_CLIENT_ID`, `UX_MAIND_OIDC_CLIENT_SECRET` und `UX_MAIND_OIDC_ISSUER` aktivieren.
-- **Lokaler Standardbetrieb:** `ux-maind` startet einen geschützten Loopback-Server (`127.0.0.1`) mit CSRF-Token-Schutz (`X-Workspace-Token`) und speichert alle Daten revisionssicher in `workspace.sqlite` (`WAL`-Modus).
-- **Terminal & Verlauf bei Web-/Container-Deployment:** Das Web-Terminal (`GET /api/job-history`) liest nicht aus flüchtigem Browser-Speicher, sondern direkt aus der persistenten SQLite-Datenbank des Servers (inklusive automatischer Rekonstruktion aller Konvertierungs-, Vision-, A-, B- und C-Läufe). Für Mehrbenutzer- oder Cloud-Deployments lässt sich der Hintergrund-Job-Worker (`studio.py:job`) über denselben SQLite-/Queue-Vertrag in einen dedizierten Worker-Prozess auslagern, während die API-Schlüssel ausschließlich als Server-Umgebungsvariablen verbleiben.
+### 7.1 Speicherort & `--workspace`-Vorrang
+- **Dauerhafter Standardpfad unter Windows:** `%LOCALAPPDATA%\UX-mAInd\workspace` (unter Linux/macOS: `~/.local/share/UX-mAInd/workspace`). Alle Originalkopien (`<uuid>/original/`), versionierten `DoclingDocument`-JSONs (`<uuid>/native/`), Anzeige-PDFs (`display/`), Läufe, Prüferprofile, Entscheidungen, Zweitprüfungs-Sitzungen (`workspace.sqlite` im `WAL`-Modus) und Standardexporte (`exports/`) liegen dauerhaft in diesem Ordner und werden bei jedem normalen Neustart verlustfrei wieder geöffnet.
+- **Sichtbarkeit in der Oberfläche:** Der **tatsächlich geöffnete Arbeitsordner** wird jederzeit unten links in der Seitenleiste (`📁 ...`), als Badge oben im `Studienkorpus` sowie unter `Einstellungen → Pfade & Speicher` angezeigt (mit expliziter Kennzeichnung **`Dauerhafter Standardpfad`** vs. **`Explizites --workspace`**).
+- **Entwicklung & Tests getrennt vom BA-Arbeitsstand (`--workspace`):** Ein beim Start angegebenes `--workspace <Pfad>` hat stets Vorrang vor dem Standardpfad:
+  ```powershell
+  # Regulärer BA-Start im dauerhaften Standardordner (%LOCALAPPDATA%\UX-mAInd\workspace)
+  start-ux-maind.cmd
+
+  # Isolierter Entwicklungs- oder Teststart ohne Berührung des BA-Arbeitsstands
+  start-ux-maind.cmd --port 8470 --workspace "C:\Temp\ux-maind-testkopie"
+  # bzw. direkt über Python / uv:
+  uv run --locked ux-maind --port 8470 --workspace "C:\Temp\ux-maind-testkopie"
+  ```
+
+### 7.2 Einfache, überprüfbare Übernahme eines bisherigen Arbeitsstands aus `workspace-r12`
+Sobald neben dem neuen Standardordner ein bisheriger Arbeitsstand unter `%LOCALAPPDATA%\UX-mAInd\workspace-r12` liegt, erkennt Studio ihn beim Start **rein lesend (`?mode=ro`)** und weist im Startbanner der Konsole, im Hinweisbanner des noch leeren `Studienkorpus` sowie unter `Einstellungen → Pfade & Speicher` mit exakten Dokument-, Lauf- und Finding-Zählern darauf hin.
+
+**Übernahme durch Kopieren bei geschlossenem Studio (empfohlener, rückkehrfähiger Weg):**
+1. **Studio vollständig beenden** (App-Fenster und ggf. minimiertes Server-Konsolenfenster schließen, damit keine offene `.sqlite-wal`-Transaktion läuft).
+2. **Inhalt kopieren (nicht verschieben!)**, damit `workspace-r12` unverändert als überprüfbare Rückfallebene erhalten bleibt:
+   ```powershell
+   $src = Join-Path $env:LOCALAPPDATA "UX-mAInd\workspace-r12"
+   $dst = Join-Path $env:LOCALAPPDATA "UX-mAInd\workspace"
+   New-Item -ItemType Directory -Force -Path $dst | Out-Null
+   Copy-Item -Path (Join-Path $src "*") -Destination $dst -Recurse -Force
+   ```
+   *(Alternativ im Windows-Explorer alle Dateien und Unterordner aus `%LOCALAPPDATA%\UX-mAInd\workspace-r12` markieren → `Strg+C` → in `%LOCALAPPDATA%\UX-mAInd\workspace` mit `Strg+V` einfügen.)*
+3. **Überprüfung nach dem Start:** Studio normal über `start-ux-maind.cmd` starten. Im `Studienkorpus`, in `Synthese & Findings` und im `Quelleninspektor` prüfen, dass alle Dokumente, Dokumentversionen, Originalbelege und bisherigen Entscheidungen vorhanden sind. Ein alter Standard-Exportpfad `workspace-r12\exports` wird automatisch auf `workspace\exports` umgestellt, sodass neue Exporte `workspace-r12` niemals verändern.
+
+---
+
+## 8. Einzelprüfung & Optionale Unabhängige Zweitprüfung
+
+### 8.1 Normale Einzelprüfung (ohne zweites Profil oder Anmeldung)
+Für die reguläre Einzelauswertung ist **weder ein zweites Prüferprofil noch ein Cloud-Dienst oder Login** erforderlich:
+1. Studio startet direkt mit dem lokalen Profil **`Standard-Prüfer` (`SP`)** (oben rechts in der Kopfleiste sichtbar und jederzeit optional umbenennbar).
+2. Öffne `Synthese & Findings` (`Taste 3`), wähle ein Finding aus, prüfe seine Zitate über die Belegkarten in der synchronen **Dual-View** (`Quelleninspektor`) und klicke direkt auf **`Bestätigen`**, **`Korrigieren`** oder **`Verwerfen`**.
+3. Exportiere das Ergebnis jederzeit über **`A4-Handout`**, **`Markdown-Bericht`** oder **`Forschungs-JSON`**. Ein zweites Prüferprofil bleibt für diesen gesamten Ablauf freiwillig.
+
+---
+
+### 8.2 Vollständige Anleitung: „Zweitprüfung am selben Rechner“ (`same_machine`)
+
+Beide Personen arbeiten nacheinander am selben Arbeitsbereich über den lokalen Profilwechsel und durchlaufen exakt vier Schritte:
+
+1. **Schritt 1 — Ausgangsstand festhalten:**
+   - Öffne die gewünschte Studie in `Synthese & Findings` (`Taste 3`) und klicke oben rechts auf **`Zweitprüfung`**.
+   - Wähle **`Am selben Rechner`**.
+   - Trage für **Prüfer 1** und **Prüfer 2** jeweils nur einen **Anzeigenamen oder ein Kürzel** ein (z. B. `Chris` / `CU` und `Alex` / `AL` — kein Konto, keine E-Mail nötig).
+   - Hake die Findings an, die in die Zweitprüfung aufgenommen werden sollen, und klicke auf **`Ausgangsstand einfrieren & starten`**. Studio friert den gemeinsamen Ausgangsvorschlag, die gewählten Lauf- und Dokumentversionen sowie alle Originalbelege unter einer Prüfsumme (`baseline_sha256`) ein und aktiviert automatisch **Prüfer 1**.
+2. **Schritt 2 — Unabhängig & strikt verblindet bewerten:**
+   - **Prüfer 1** öffnet jedes ausgewählte Finding, prüft die Originalbelege in der Dual-View, gibt optional eine Begründung ein und wählt **`Bestätigen`**, **`Korrigieren`** (öffnet den Feldeditor für Titel, Valenz, UX-Heuristik, Begründung, Wirkung, Scope, Unsicherheit, Gestaltungshypothese), **`Verwerfen`** oder **`Offen`**.
+   - Sobald alle ausgewählten Findings bewertet sind, klickt Prüfer 1 im Zweitprüfungs-Banner auf **`Ersturteil verbindlich abgeben`**. Das Ersturteil von Prüfer 1 ist damit unveränderbar eingefroren.
+   - Klicke im Banner auf **`Zu Prüfer 2 wechseln`**.
+   - **Wann sind Entscheidungen sichtbar?** **Vor der Vergleichsfreigabe niemals für die andere Person:** Prüfer 2 sieht wieder exakt den **gemeinsamen Ausgangsvorschlag** (`UNREVIEWED`) und ausschließlich seine **eigenen** Eingaben. Urteile, Begründungen und Finding-Korrekturen von Prüfer 1 sind in der Oberfläche, im Entscheidungsverlauf, im Wissensgraphen sowie in allen Exporten (`A4-HTML`, `Markdown`, `JSON` und im Ausgabeordner abgelegten Dateien) strikt ausgeblendet. Ein Klick auf `Vergleich freigeben` ist technisch gesperrt, solange noch nicht beide Abgaben vorliegen.
+   - **Prüfer 2** bewertet dieselben Findings unabhängig und klickt ebenfalls auf **`Ersturteil verbindlich abgeben`**.
+3. **Schritt 3 — Vergleichen & bei Bedarf neu bewerten:**
+   - Sobald beide Ersturteile abgegeben sind, wird im Banner die Schaltfläche **`Vergleich freigeben`** aktiv. Klicke darauf.
+   - **Ab jetzt sichtbar:** Für jedes Finding erscheinen die Spalten **Prüfer 1** und **Prüfer 2** nebeneinander — inklusive eingefrorenem **Ersturteil**, Begründung und hervorgehobenen Feld-Abweichungen (`Übereinstimmung` vs. `Abweichung`).
+   - **Spätere Änderung erfassen:** Möchte Prüfer 1 oder Prüfer 2 nach Einsicht des Vergleichs sein Urteil anpassen, wählt die betreffende Person ihr Profil und klickt am Finding auf **`Nach Vergleich eigene Folgebewertung abgeben (Ersturteil bleibt erhalten)`**. Die neue Bewertung wird als `Spätere Änderung #1` (`phase="revision"`) angehängt; das ursprüngliche **Ersturteil (`phase="initial"`) bleibt unverändert sichtbar und gespeichert**.
+4. **Schritt 4 — Ergebnis übernehmen & exportieren:**
+   - Wähle am unteren Kartenabschnitt jedes Findings ausdrücklich, welche Fassung in den Studienstand übernommen wird:
+     - **`Fassung Prüfer 1 übernehmen`** oder **`Fassung Prüfer 2 übernehmen`** (übernimmt den jeweils letzten Stand des gewählten Prüfers),
+     - **`Ausgangsvorschlag übernehmen`** oder **`Konsensfassung bearbeiten …`** (gemeinsame Formulierung),
+     - oder **`Als offene Abweichung belassen`** (`⚠ Offene Abweichung` bleibt in UI, A4-HTML und Markdown ausdrücklich als ungeklärte Abweichung sichtbar).
+   - Exportiere das Endergebnis oben in `Synthese & Findings` über **`A4-Handout`**, **`Markdown`** oder **`JSON-Export`** (`ux-research.json`).
+
+---
+
+### 8.3 Vollständige Anleitung: „Zweitprüfung auf zwei Rechnern“ (`two_machines`)
+
+Beide Personen arbeiten lokal an getrennten Rechnern ohne Netzwerkverbindung zueinander, ohne Cloud-Server und **ohne erneuten Sprachmodell-Aufruf auf Rechner 2**. Der gesamte Austausch läuft über vier kompakte, per SHA-256 integritätsgeprüfte Dateien:
+
+| Phase | Wer handelt? | Weitergegebene Datei | Was passiert & wann werden Entscheidungen sichtbar? |
+| :--- | :--- | :--- | :--- |
+| **1. Auftrag & Paket-Export** | **Rechner 1** *(Ausgangsrechner / Prüfer 1)* → gibt Datei an **Rechner 2** | **`ux-pruefpaket-<id>.zip`** *(Button `Prüfpaket (.zip)` im Zweitprüfungs-Banner)* | Prüfer 1 startet `Zweitprüfung → Auf zwei Rechnern`. Das `.zip`-Paket enthält ausschließlich die für diesen Auftrag ausgewählten Originaldokumente, versionierten `DoclingDocument`-JSONs, gecachten LibreOffice-Anzeige-PDFs (falls vorhanden), Stufe-A-Belege und Findings — **niemals Urteile oder Korrekturen von Prüfer 1** (selbst wenn Prüfer 1 auf Rechner 1 schon vorab bewertet hat!). |
+| **2. Offline-Prüfung & Rückgabe** | **Rechner 2** *(Zweitprüfer / Prüfer 2)* → gibt Datei zurück an **Rechner 1** | **`ux-abgabe-<id>-reviewer_b.json`** *(Button `Bewertungs-Rückgabe (.json) exportieren`)* | Prüfer 2 klickt auf Rechner 2 im `Studienkorpus` auf **`Prüfpaket importieren`** und wählt `ux-pruefpaket-<id>.zip`. Alle Findings und **Originalbelege öffnen sich lokal in der Dual-View** (kein Zugriff auf Rechner 1, 0 Modellläufe). Prüfer 2 bewertet alle Findings verblindet, klickt **`Ersturteil verbindlich abgeben`** und exportiert `ux-abgabe-<id>-reviewer_b.json`. *(Noch sieht niemand das fremde Urteil!)* |
+| **3. Import, Freigabe & Vergleichs-Rückgabe** | **Rechner 1** → gibt Datei an **Rechner 2** | **`ux-vergleich-<id>.json`** *(Button `Vergleich für Rechner 2 (.json)`)* | Prüfer 1 gibt auf Rechner 1 sein eigenes Ersturteil ab (falls noch offen), klickt auf **`Abgabe / Überarbeitung (.json) importieren`** und liest `ux-abgabe-<id>-reviewer_b.json` ein. Danach klickt Prüfer 1 auf **`Vergleich freigeben`** → **ab jetzt sind beide Ersturteile auf Rechner 1 nebeneinander sichtbar!** Damit Prüfer 2 den Vergleich ebenfalls sieht, exportiert Rechner 1 **`ux-vergleich-<id>.json`** und gibt die Datei an Rechner 2 weiter. |
+| **4. Vergleich sichten & opt. Überarbeitung** | **Rechner 2** → gibt Datei (optional) zurück an **Rechner 1** | **`ux-ueberarbeitung-<id>-reviewer_b.json`** *(gleicher Export-Button auf Rechner 2 nach Revision)* | Prüfer 2 klickt auf Rechner 2 auf **`Freigegebenen Vergleich (.json) importieren`** → **ab jetzt sind beide Urteile und Korrekturen auch auf Rechner 2 nebeneinander sichtbar!** Möchte Prüfer 2 danach eine Überarbeitung ergänzen, klickt er am Finding auf `Nach Vergleich eigene Folgebewertung abgeben`, speichert die Änderung (sein Ersturteil bleibt eingefroren erhalten) und exportiert **`ux-ueberarbeitung-<id>-reviewer_b.json`** zurück an Rechner 1. |
+| **5. Ergebnis übernehmen & Berichte exportieren** | **Rechner 1** | **`ux-study-handout.html`**, **`ux-study-report.md`**, **`ux-research.json`** | Prüfer 1 importiert ggf. `ux-ueberarbeitung-<id>-reviewer_b.json`, wählt je Finding ausdrücklich die zu übernehmende Fassung (oder belässt `Offene Abweichung`) und exportiert A4-HTML, Markdown und Forschungs-JSON. |
+
+**Schutzmechanismen beim Datei-Import:**
+- **Eindeutige Zuordnung:** Jeder Import prüft `session_id`, den Ausgangsstand-Hash `baseline_sha256` und die Datei-Prüfsumme `package_sha256`. Eine Datei aus einem anderen Prüfauftrag oder mit manipuliertem Inhalt wird mit klarer Fehlermeldung abgewiesen.
+- **Keine Duplikate bei erneutem Einlesen:** Wird dieselbe `.zip`- oder `.json`-Datei versehentlich ein zweites Mal importiert, erkennt Studio die gespeicherte Quittung bzw. `decision_uid` (`Bereits importiert — keine doppelten Entscheidungen erzeugt`).
+- **Atomarer Fehlerschutz:** Ein beschädigtes Archiv oder eine unpassende Datei verändert den vorhandenen Arbeitsstand und abgegebene Ersturteile zu **0 %** (Transaktions-Rollback vor jedem Schreibzugriff).
+
+---
+
+### 8.4 Auswertung für die Bachelorarbeit & Prüferangaben in weitergebbaren Dateien
+
+- **Welche Ersturteile für die BA-Auswertung heranziehen?**
+  Für die methodische Auswertung unabhängiger Urteile (z. B. Übereinstimmungsrate vor Diskussion / Inter-Rater-Vergleich) sind **ausschließlich die vor der Vergleichsfreigabe eingefrorenen Ersturteile** maßgeblich — **nicht** die späteren Konsens-Überarbeitungen! Im exportierten **Forschungs-JSON (`ux-research.json`)** findest du an jedem geprüften Finding (`objects[]` mit `kind == "finding"`):
+  - `dual_review.reviewer_a.initial` und `dual_review.reviewer_b.initial`: Unveränderte Ersturteile (`action`, `reason`, `interpretation`, `at`, `decision_uid`) beider Personen.
+  - `dual_review.agreement.initial_agreed` und `dual_review.agreement.initial_differing_fields`: Direkter Vergleich der beiden unabhängigen Ersturteile.
+  - `dual_review.reviewer_a.revisions[]` und `dual_review.reviewer_b.revisions[]`: Getrennt ausgewiesene spätere Änderungen nach Freigabe des Vergleichs (`phase="revision"`).
+  - `dual_review.resolution` sowie `effective`: Die in Schritt 4 ausdrücklich in den Studienstand übernommene Fassung (bzw. `OPEN_DISAGREEMENT`).
+- **Welche Prüferangaben stehen tatsächlich in weitergebbaren Dateien?**
+  Es werden **keine E-Mail-Adressen, Passwörter, Kontokennungen, Systempfade oder API-Schlüssel** eingebettet — ausschließlich die selbst gewählten lokalen Profilfelder:
+  - `ux-pruefpaket-<id>.zip` (`manifest.json`): `reviewer_a` & `reviewer_b` (`id`, `display_name`, `short_code`, `role`, `auth_mode: "local"`), **0 Bewertungen**.
+  - `ux-abgabe-<id>-*.json` / `ux-ueberarbeitung-<id>-*.json`: `id`, `name`/`display_name`, `short_code`, `role`, `auth_mode: "local"` des abgebenden Slots samt seinen Entscheidungen.
+  - `ux-vergleich-<id>.json` & `ux-research.json`: Lokale Profilstempel (`id`, `name`/`display_name`, `short_code`, `role`, `auth_mode: "local"`) beider Prüfer und der übernehmenden Person.
+  - `ux-study-handout.html` (A4-HTML) & `ux-study-report.md` (Markdown): Nur der gewählte Anzeigename (`name`) an den Prüfnotizen sowie die Quellenkennung der übernommenen Fassung (`reviewer_a` / `reviewer_b` / `consensus` / `baseline` / `open_disagreement`).
+
+---
+
+## 9. Abhängigkeiten, 1-Klick-Start & Server-Betrieb
+
+| Kategorie | Komponenten | Wofür benötigt? |
+| :--- | :--- | :--- |
+| **Zwingend erforderlich** *(für lokale Prüfung, Zweitprüfung & Dateiaustausch)* | **Python 3.12+** mit den gesperrten Open-Source-Paketen aus `.venv` (`uv sync --locked` bzw. `install.ps1` / `install.sh`: u. a. `starlette`, `uvicorn`, `docling`, `docling-core`, `docling-graph`, `pydantic`, `SQLite3`) + **moderner Webbrowser** (Edge, Chrome, Firefox) + vorab gebündelte Web-Assets in `ux_maind/app/web/generated/`. | Start von Studio, Einzelprüfung, 1- & 2-Rechner-Zweitprüfung (`.zip`/`.json`), Dual-View für PDF/TXT/MD/CSV/VTT und gecachte Office-Anzeige-PDFs sowie alle Exporte. **Kein Cloud-Konto, kein API-Schlüssel und keine proprietäre Software nötig!** |
+| **Optional** *(je nach Dateiformat & neuem KI-Lauf)* | 1. **LibreOffice (`soffice`, MPL-2.0)** lokal installiert.<br>2. **Sprach-/Vision-Modellzugang** über `Ollama` (100 % lokal, kostenlos), akademisches `NHR@FAU`-Gateway (`LLMAPI_KEY`, 0,00 €) oder optionale Cloud-API (`GEMINI_API_KEY`, `OPENAI_API_KEY`, …). | 1. Erstmaliges lokales Rendern von `.docx`/`.pptx`/`.odt` zu Anzeige-PDFs (im `.zip`-Prüfpaket wird das gecachte Anzeige-PDF bereits mitgeliefert, sodass Rechner 2 kein LibreOffice braucht!).<br>2. Nur für **neue** KI-Extraktions-/Syntheseläufe (Stufe 02 / A / B / C); für die Prüfung bestehender Studien oder Prüfpakete nicht erforderlich. |
+| **Nur für Entwicklung** *(Änderungen am UI-Quellcode / Repo-Pflege)* | **Node.js 20+ & npm** (`frontend/`), `esbuild`, Unittest-/Audit-Skripte (`tests/`, `scripts/`). | Nur wenn `.jsx`/`.css`-Dateien unter `frontend/src/` geändert und das Bundle neu gebaut werden soll (`npm run build --prefix frontend`). |
+
+- **Windows-Starter & Container-Betrieb:**
+  - **Windows:** `powershell -ExecutionPolicy Bypass -File install.ps1` richtet `.venv` einmalig ein; `start-ux-maind.cmd` startet den lokalen Loopback-Server (`http://127.0.0.1:8465/`, CSRF-geschützt über `X-Workspace-Token`) und öffnet das App-Fenster (optional mit `--port` und `--workspace`).
+  - **Linux / macOS / Docker:** `./install.sh` bzw. `docker compose up --build`.
+- **Späterer Anschlusspunkt für angemeldete Prüferidentitäten (`ReviewerIdentityProvider`):** Im BA-Betrieb arbeitet `ux_maind/app/auth.py` zu 100 % lokal über `LocalProfileIdentityProvider` (nur Name oder Kürzel). Für spätere Hochschul- oder Team-Installationen definiert `auth.py` das Protokoll `ReviewerIdentityProvider` (`set_identity_provider`), über das eine angemeldete Identität (z. B. Hochschul-SSO / OIDC / SAML) angebunden werden kann, ohne `ux_decisions`, `dual_review` oder Exportformate zu ändern.
+- **Terminal & Verlauf:** `GET /api/job-history` rekonstruiert bei einem Server-Neustart alle bisherigen Läufe direkt aus `workspace.sqlite`.

@@ -75,6 +75,23 @@ class Workspace:
                 CREATE TABLE IF NOT EXISTS ux_objects(id INTEGER PRIMARY KEY, kind TEXT, at TEXT, proposal TEXT, metadata TEXT);
                 CREATE TABLE IF NOT EXISTS ux_decisions(id INTEGER PRIMARY KEY, target_type TEXT, target TEXT, at TEXT, origin TEXT, action TEXT, reason TEXT, payload TEXT);
                 CREATE INDEX IF NOT EXISTS ux_decision_target ON ux_decisions(target_type,target,id);
+                CREATE TABLE IF NOT EXISTS ux_review_sessions(
+                    session_id TEXT PRIMARY KEY,
+                    mode TEXT NOT NULL,
+                    role_on_this_machine TEXT NOT NULL DEFAULT 'origin',
+                    created_at TEXT NOT NULL,
+                    scope_json TEXT NOT NULL,
+                    reviewer_a_json TEXT NOT NULL,
+                    reviewer_b_json TEXT NOT NULL,
+                    baseline_sha256 TEXT NOT NULL,
+                    baseline_json TEXT NOT NULL,
+                    id_map_json TEXT NOT NULL,
+                    submitted_a_at TEXT,
+                    submitted_b_at TEXT,
+                    released_at TEXT,
+                    resolutions_json TEXT NOT NULL DEFAULT '{}',
+                    imported_receipts_json TEXT NOT NULL DEFAULT '[]'
+                );
             """)
             columns = {r["name"] for r in db.execute("PRAGMA table_info(documents)")}
             if "diagnostics" not in columns:

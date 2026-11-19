@@ -13,9 +13,6 @@ services:
       - GEMINI_TRIAL_KEY=${GEMINI_TRIAL_KEY:-}
       - MISTRAL_API_KEY=${MISTRAL_API_KEY:-}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
-      - UX_MAIND_OIDC_CLIENT_ID=${UX_MAIND_OIDC_CLIENT_ID:-}
-      - UX_MAIND_OIDC_CLIENT_SECRET=${UX_MAIND_OIDC_CLIENT_SECRET:-}
-      - UX_MAIND_OIDC_ISSUER=${UX_MAIND_OIDC_ISSUER:-https://accounts.google.com}
     restart: unless-stopped
 
 volumes:
