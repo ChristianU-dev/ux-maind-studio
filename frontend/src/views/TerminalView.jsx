@@ -15,8 +15,20 @@ import { usePrefs, statusInfo } from "../lib/i18n.jsx";
 import { api } from "../lib/api.js";
 import { InfoPopover, StatusBadge, StatusDot } from "../components/ui.jsx";
 
+function formatEventLocalClock(isoUtc) {
+  if (!isoUtc) return "--:--:--";
+  const ms = Date.parse(isoUtc);
+  if (!Number.isFinite(ms)) return String(isoUtc).slice(11, 19) || "--:--:--";
+  return new Intl.DateTimeFormat("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(new Date(ms));
+}
+
 export function formatRichTerminalEvent(ev, t) {
-  const ts = ev.at ? ev.at.slice(11, 19) : "--:--:--";
+  const ts = formatEventLocalClock(ev.at);
   const rawStage = ev.workflow_step || ev.workflow_stage || ev.kind || ev.stage || ev.phase || "job";
   const stageGroup =
     {

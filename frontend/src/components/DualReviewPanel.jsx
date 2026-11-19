@@ -226,8 +226,8 @@ export function DualReviewStartModal({
       onOpenChange={onOpenChange}
       title={t("Unabhängige Zweitprüfung starten", "Start Independent Dual Review")}
       subtitle={t(
-        "Friert den aktuellen Ausgangsstand (Findings, Laufversionen & Originalbelege) ein. Bis beide Prüfer abgegeben haben und der Vergleich freigegeben wird, bleibt jede Bewertung strikt verblindet.",
-        "Freezes the current baseline (Findings, run versions & verbatim anchors). Until both reviewers submit and comparison is released, assessments remain strictly blinded."
+        "Hält den aktuellen Ausgangsstand (Findings, Laufversionen & Originalbelege) fest. Bis beide abgegeben haben, ist nur die eigene Bewertung sichtbar; der Vergleich bleibt bis zur Freigabe verborgen.",
+        "Captures the current baseline (Findings, run versions & verbatim anchors). Until both submit, only your assessment is visible; the comparison remains hidden until release."
       )}
     >
       <div className="lx-form-stack">
@@ -421,8 +421,8 @@ export function DualReviewSessionBanner({
       await api("dual-review-submit", { session_id: session.session_id });
       toast.success(
         t(
-          "Ersturteil verbindlich abgegeben & eingefroren",
-          "Initial judgment submitted & frozen"
+          "Deine erste Bewertung ist abgegeben",
+          "Your first assessment has been submitted"
         )
       );
       await onRefreshAll?.();
@@ -509,12 +509,20 @@ export function DualReviewSessionBanner({
             ID {session.session_id.slice(0, 8)} · Hash {session.baseline_sha256.slice(0, 8)}
           </span>
           {!session.released ? (
-            <span className="lx-pill lx-pill-warning" style={{ fontSize: 11 }}>
+            <span
+              className="lx-pill lx-pill-warning"
+              data-testid="dual-visibility-pill"
+              style={{ fontSize: 11 }}
+            >
               <EyeOff size={11} style={{ marginRight: 4 }} />
-              {t("Verblindet bis zur Freigabe", "Blinded until release")}
+              {t("Nur eigene Bewertung sichtbar", "Only your assessment is visible")}
             </span>
           ) : (
-            <span className="lx-pill lx-pill-success" style={{ fontSize: 11 }}>
+            <span
+              className="lx-pill lx-pill-success"
+              data-testid="dual-visibility-pill"
+              style={{ fontSize: 11 }}
+            >
               <Unlock size={11} style={{ marginRight: 4 }} />
               {t("Vergleich freigegeben", "Comparison released")}
             </span>
@@ -552,10 +560,10 @@ export function DualReviewSessionBanner({
                 Findings
               </span>
             ) : ownSubmitted ? (
-              <span>
+              <span data-testid="dual-banner-submitted-note">
                 {t(
-                  "Dein Ersturteil ist eingefroren. Sobald beide Abgaben vorliegen, kann der Vergleich freigegeben werden.",
-                  "Your initial judgment is frozen. Once both submissions exist, comparison can be released."
+                  "Deine erste Bewertung ist abgegeben. Der Vergleich bleibt bis zur Freigabe verborgen.",
+                  "Your first assessment has been submitted. The comparison remains hidden until release."
                 )}
               </span>
             ) : (
@@ -941,11 +949,16 @@ export function DualReviewFindingWorkbench({ finding, onSaved }) {
           <div className="lx-review-callout-head">
             <span className="lx-review-callout-title">
               <EyeOff size={13} />
-              <strong>
-                {t(
-                  "Unabhängige Erstbewertung (verblindet)",
-                  "Blinded Independent Initial Assessment"
-                )}
+              <strong data-testid="dual-detail-heading">
+                {dr.own_submitted
+                  ? t(
+                      "Deine erste Bewertung ist abgegeben",
+                      "Your first assessment has been submitted"
+                    )
+                  : t(
+                      "Unabhängige Erstbewertung",
+                      "Independent first assessment"
+                    )}
               </strong>
             </span>
             {own && (
@@ -955,11 +968,16 @@ export function DualReviewFindingWorkbench({ finding, onSaved }) {
               </span>
             )}
           </div>
-          <p className="lx-text-xs lx-muted">
-            {t(
-              "Du siehst hier ausschließlich den eingefrorenen Ausgangsvorschlag und deine eigene Bewertung. Urteile und Korrekturen der anderen Person bleiben bis zur Freigabe unsichtbar.",
-              "You see only the frozen baseline proposal and your own judgment. The other reviewer's decisions and edits remain hidden until comparison release."
-            )}
+          <p className="lx-text-xs lx-muted" data-testid="dual-detail-subtext">
+            {dr.own_submitted
+              ? t(
+                  "Unabhängige Erstbewertung gespeichert. Der Vergleich bleibt bis zur Freigabe verborgen.",
+                  "Independent first assessment saved. The comparison remains hidden until release."
+                )
+              : t(
+                  "Nur eigene Bewertung sichtbar — du siehst den gemeinsamen Ausgangsvorschlag und deine eigene Bewertung. Der Vergleich bleibt bis zur Freigabe verborgen.",
+                  "Only your assessment is visible — you see the shared baseline proposal and your own assessment. The comparison remains hidden until release."
+                )}
           </p>
           {own?.reason && <p className="lx-review-note-quote">„{own.reason}“</p>}
         </div>

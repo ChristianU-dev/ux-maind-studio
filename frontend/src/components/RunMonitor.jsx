@@ -3,7 +3,11 @@ import { Drawer } from "vaul";
 import { Activity, AlertTriangle, CheckCircle2, Clock, ExternalLink, Play, Square, X } from "lucide-react";
 import { usePrefs, statusInfo } from "../lib/i18n.jsx";
 import { StatusDot } from "./ui.jsx";
-import { SafeJobConsole, useFluidRuntimeProgress } from "./PipelineFlowConsole.jsx";
+import {
+  formatLocalDateTime,
+  SafeJobConsole,
+  useFluidRuntimeProgress,
+} from "./PipelineFlowConsole.jsx";
 
 const STAGE_ORDER = [
   ["conversion", "Konvertierung", "Conversion"],
@@ -21,7 +25,7 @@ export function RunMonitor({
   onResumeWorkflow,
   onEndWorkflow,
 }) {
-  const { t } = usePrefs();
+  const { lang, t } = usePrefs();
   const fluid = useFluidRuntimeProgress(status);
 
   const busy = Boolean(status?.busy);
@@ -67,9 +71,11 @@ export function RunMonitor({
   } else if (status?.state === "ERROR") {
     pillTone = "danger";
     pillLabel = t("Letzter Lauf fehlerhaft", "Last Run Failed");
-  } else if (wf) {
+  } else if (wf || status?.state === "FINISHED") {
     pillTone = "success";
-    pillLabel = `${t("Abgeschlossen", "Completed")} · ${elapsed}`;
+    pillLabel = status?.started
+      ? `${t("Abgeschlossen", "Completed")} · ${elapsed}`
+      : t("Abgeschlossen", "Completed");
   }
 
   return (
@@ -77,6 +83,7 @@ export function RunMonitor({
       <Drawer.Trigger asChild>
         <button
           type="button"
+          data-testid="run-monitor-pill"
           className={`lx-run-pill${busy ? " is-busy" : ""}${waitingReview ? " is-review" : ""}`}
           title={t("Pipeline-Aktivitätsmonitor öffnen", "Open Pipeline Activity Monitor")}
         >
@@ -126,13 +133,13 @@ export function RunMonitor({
                 </div>
               )}
               {status?.started && (
-                <div className="lx-meta-line tabular">
-                  <span>
-                    {t("Start", "Started")}: {status.started.slice(11, 19)} UTC
+                <div className="lx-meta-line tabular" data-testid="run-monitor-timestamps">
+                  <span data-testid="run-monitor-started" title={`UTC: ${status.started}`}>
+                    {t("Start", "Started")}: {formatLocalDateTime(status.started, lang)}
                   </span>
                   {status.ended && (
-                    <span>
-                      {t("Ende", "Ended")}: {status.ended.slice(11, 19)} UTC
+                    <span data-testid="run-monitor-ended" title={`UTC: ${status.ended}`}>
+                      {t("Ende", "Ended")}: {formatLocalDateTime(status.ended, lang)}
                     </span>
                   )}
                 </div>

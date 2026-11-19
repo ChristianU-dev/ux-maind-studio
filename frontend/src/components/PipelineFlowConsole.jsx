@@ -44,14 +44,47 @@ function resolveActionStageKey(action) {
 }
 
 export function formatRuntimeElapsed(started, ended, nowTick) {
-  if (!started) return "00:00";
+  if (!started) return "0 s";
   const t0 = Date.parse(started);
   const t1 = ended ? Date.parse(ended) : nowTick;
-  if (!Number.isFinite(t0) || !Number.isFinite(t1)) return "00:00";
+  if (!Number.isFinite(t0) || !Number.isFinite(t1)) return "0 s";
   const sec = Math.max(0, Math.floor((t1 - t0) / 1000));
-  const m = Math.floor(sec / 60);
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
   const s = sec % 60;
-  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  if (h > 0) return `${h} h ${m} min ${s} s`;
+  if (m > 0) return `${m} min ${s} s`;
+  return `${s} s`;
+}
+
+export function formatLocalDateTime(isoUtc, lang = "de") {
+  if (!isoUtc) return "—";
+  const ms = Date.parse(isoUtc);
+  if (!Number.isFinite(ms)) return String(isoUtc);
+  const locale = lang === "en" ? "en-GB" : "de-DE";
+  return new Intl.DateTimeFormat(locale, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+    timeZoneName: "short",
+  }).format(new Date(ms));
+}
+
+export function formatLocalClockTime(isoUtc, lang = "de") {
+  if (!isoUtc) return "--:--:--";
+  const ms = Date.parse(isoUtc);
+  if (!Number.isFinite(ms)) return String(isoUtc).slice(11, 19) || "--:--:--";
+  const locale = lang === "en" ? "en-GB" : "de-DE";
+  return new Intl.DateTimeFormat(locale, {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(new Date(ms));
 }
 
 export function useFluidRuntimeProgress(jobStatus) {
@@ -180,7 +213,7 @@ function formatEventLine(ev, t) {
 }
 
 export function SafeJobConsole({ events = [], status, defaultOpen = false, compact = false }) {
-  const { t } = usePrefs();
+  const { lang, t } = usePrefs();
   const [open, setOpen] = useState(defaultOpen);
   const [onlyIssues, setOnlyIssues] = useState(false);
   const logRef = useRef(null);
@@ -198,7 +231,7 @@ export function SafeJobConsole({ events = [], status, defaultOpen = false, compa
     if (status?.state === "ERROR" && safeMsg) {
       if (!base.some((b) => b.text.includes(safeMsg))) {
         base.push({
-          ts: (status.ended || status.started || "").slice(11, 19) || "—",
+          ts: formatLocalClockTime(status.ended || status.started, lang),
           stageLabel: "FEHLER",
           text: safeMsg,
           isError: true,
@@ -207,7 +240,7 @@ export function SafeJobConsole({ events = [], status, defaultOpen = false, compa
       }
     }
     return onlyIssues ? base.filter((b) => b.isError || b.isWarn) : base;
-  }, [events, onlyIssues, status, safeMsg, t]);
+  }, [events, onlyIssues, status, safeMsg, lang, t]);
 
   const issueCount = useMemo(
     () =>
@@ -326,7 +359,7 @@ export function SafeJobConsole({ events = [], status, defaultOpen = false, compa
               {onlyIssues
                 ? t("Keine Warnungen oder Fehler im letzten Lauf.", "No warnings or errors recorded.")
                 : safeMsg
-                ? `[${(status?.ended || status?.started || "").slice(11, 19) || "READY"}] ${safeMsg}`
+                ? `[${formatLocalClockTime(status?.ended || status?.started, lang)}] ${safeMsg}`
                 : t(
                     "Bereit — sobald ein Konvertierungs- oder Modellauftrag startet, erscheinen hier Live-Statusmeldungen.",
                     "Idle — live stage telemetry and error diagnostics appear here as soon as a job starts."
