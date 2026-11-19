@@ -1,0 +1,54 @@
+# Architekturprüfung · Monday V1.1
+
+## Vorab festgelegte Referenzen
+
+Die Auswahl wurde am 09.11.2026 am Produktstand 466d79e vor Produktänderungen festgelegt. Beide lokalen Pakete sind synthetische Arbeitsdaten für die lokale Prüfung. Die sechs Originale und sechs nativen Dokumente haben in beiden Paketen jeweils identische SHA-256-Werte. Die Manifeste unterscheiden sich durch die Paketläufe. Die Artefakthashes wurden mit dem Produktloader geprüft.
+
+| Fall | Unveränderter Nachweis | Vorab erwartetes Urteil |
+|---|---|---|
+| R1 Termin | document_01.txt Zeile 6, #/texts/1 Zeichen 58–113 | Bestätigter Liefertermin als Kontext. Die getrennte Aussage zum alten Boardtermin bleibt eigenständig. |
+| R2 Zugang | document_06.pptx Folie 1, #/texts/3; document_05.docx Absatz 22; #/pictures/1 | Offene Frage. Bildtext „Answer still missing“ und Auftrag belegen keine Zugänglichkeit. |
+| R3 Viewer | document_03.txt Zeile 81, #/texts/38; document_04.pptx Folie 6, #/texts/56–57 | Bericht über Lese-/Schreibgrenze. Gleiches Zitat derselben Sprecherin in zwei Dokumenten ergibt keine unabhängige Bestätigung. |
+| R4 Sortierung | document_01.txt Zeile 12, #/texts/3; document_02.txt Zeile 28, #/texts/4 | Sortierreihenfolge und Verwechslung einer Tabellenzeile bleiben getrennt. |
+| R5 Mehrdeutigkeit | document_02.txt Zeilen 4, 8, 20, 39, 48, 53; sechs native Vorkommen von „Print visitor cards“ | Ohne gültigen Anker kein einzelnes Highlight. Mit eindeutiger angebotener Referenz ist das konkrete native Vorkommen lokalisierbar. |
+| R6 Leere Ausgabe | document_05.docx, insbesondere Absatz 3 und Tabelle #/tables/0 | Frühe 0 Einheiten trotz 37 angebotener Records sind kein Nachweis für fehlenden Inhalt. Späteren Checkpoint lokal wiederverwenden. |
+| R7 Bild und Folie | document_05.docx #/pictures/1; document_04.pptx Folie 6 | Unverändertes natives Bild mit separat gekennzeichneter Lesart. PPTX-Nativelemente ohne gerendertes Seitenbild ergeben nur eine rekonstruierte Struktur. |
+
+Eingangsstände SHA-256. `test löschen/manifest.json` 31f45aa944ce1593157e6a52b08b43571e2f2381439043767b9863b87c175d20, `study.json` 60992367a680c036957dbeeb8a7bd362ffd0ea509368c0105fad431282fe2a33. `test löschen 2/manifest.json` 2e727320a3274e95d7937f717544439e7688a52e89691bab66afb0d3e3b3b86b, `study-v2.json` bf608c62008bd7a7c3e2bd901b4ff73b4223dea5b7dae3008bf4ca2ab9d912c5. Die aus dem nativen PictureItem exportierte PNG stimmt mit dem vorhandenen Bildnachweis f30c4bb747cf338dcec67f0b0b24c21a7cbd9a38a3e5813101fccd575f04199c überein.
+
+## Fehlerursachen am Ausgangsstand
+
+| Fall | Erste nachweisbare Stufe und Beweis | Korrektur |
+|---|---|---|
+| R1 | Original und Docling enthalten den Liefertermin. Das gespeicherte validierte Modellobjekt in Paket 2 hat Typ observation und einen korrekten Textanker. Die Konsolidierung erzeugt für jede ungebundene Einheit ein Finding. 91 Einheiten erscheinen als 91 Findings bei null Beziehungen. | Fachliche Relevanz getrennt führen. Alte Einheiten zur Prüfung anbieten, Finding-Zulassung explizit machen. |
+| R2 | Original, natives Element und gespeicherte Einheit tragen eine Frage. Derselbe Singleton-Pfad erzeugt daraus ein Finding. Die frühere Demo verband zudem Bildlesart und Folie als supports. | Offene Frage/Anweisung aus der Finding-Zulassung ausschließen. Lesart und Relation getrennt zeigen. |
+| R3 | Wörtliche Wiederholung mit derselben Zuschreibung im Original. Beide aktuellen Checkpoints enthalten null Relationsentscheidungen. Der v051-Demostand speichert supports und erläutert die mögliche Wiedergabe im Freitext. Der Typ enthält keine Unterscheidung von Wiederholung und unabhängigem Beleg. | Wiederholung typisieren und niemals als unabhängige Bestätigung behandeln. Alte supports-Entscheidung zur Prüfung behalten. |
+| R4 | Verschiedene Originalsachverhalte. Die vorhandene v051-Entscheidung topic_only und der aktuelle Paarpfad verschmelzen sie bereits nicht. | Begrenztes Kandidatenretrieval und negative Entscheidung beibehalten. |
+| R5 | Docling erhält sechs exakte Vorkommen; der Viewer konnte native Mehrdeutigkeit trotz Status einzeln markieren und noch immer PDF-Elementbereiche anzeigen. | Navigieren ohne Hervorheben, bis Belegzuordnung eindeutig ist. |
+| R6 | 37/37 und null validierte Einheiten im frühen Ergebnis, trotzdem completed=true. Paket 2 speichert bei demselben Original-/Docling-Hash 25 validierte Einheiten. Leere Ursprungsantwort, Adapterverlust und sonstige Modellursache sind ohne Rohdaten nicht zu unterscheiden. | Leere Verarbeitung offen ausweisen. Abgeschlossene Abschnitte und spätere Einheiten ohne erneute Modellaufrufe übernehmen. |
+| R7 | Beide Nutzer-Checkpoints speichern null Bildlesarten und null Paarentscheidungen. v051 enthält eine separat gespeicherte Vision-Lesart mit demselben nativen Bildhash, außerdem Providerstatus und eine erfolgreiche negative Paarentscheidung. In den PPTX-DoclingDocuments fehlen Seitenbilder auf allen 13 Seiten; die Positionen und Seitenstruktur sind vorhanden. | Abdeckung und letzte Fehlursache je Phase anzeigen, Ergebnis übernehmen oder fortsetzen. Office-Struktur klar kennzeichnen und Original öffnen lassen. |
+
+**Nachweislücke.** Die beiden Nutzersnapshots speichern validierte Modellobjekte, Anker und Zähler. Die vorhandenen vier Aufrufdateien unter artifacts/v051 enthalten zusammengefasste Ereignisse, keine exakten damaligen Eingabepayloads und keine rohen Modellantworten. Der Prompt im Quellstand ist eine Implementierungsreferenz. Er belegt nicht den tatsächlich gesendeten Payload. Diese Lücke betrifft vor allem die ursprüngliche leere Antwort und die genaue Ursache fehlender Angaben.
+
+## Schemaentscheidung und knapper Codebook-Vertrag
+
+- **Originalbeleg.** Native Textspanne, Tabellenzeile/-spalte oder PictureItem mit Quellen- und Paketidentität. Das Modell darf angebotene Referenzen und Zitate nennen. Die Anwendung prüft und vergibt Identitäten. Eindeutiger Treffer, Wiederfund, Mehrdeutigkeit, fehlender Treffer und Bildlesart sind getrennt.
+- **Dokumentierte Information.** Eine konkrete Aussage, Frage, Antwort, Beobachtung, Messung, Anweisung oder Vermutung. Sprecher, Rolle, Aufgabe, Fragebogenitem, Bedingung und Einheit nur mit belegtem Kontext. Modalität, Negation und Einzel-/Aggregatgeltung bleiben explizit. Eine vom Modell gelesene Bildannotation bleibt eine Lesart.
+- **UX-Einordnung.** Beobachtetes Bedienverhalten, konkrete Nutzungsfolge, belegte Usability-Barriere, positive Bewertung oder begründete UX-Anregung können als Kandidat zugelassen werden. Termine, organisatorische Fakten, Hintergrund, Aufgaben und offene Fragen bleiben Kontext. Vermutungen bleiben als solche zugänglich. Neue Vorschläge brauchen eine eigene UX-Begründung und eine eindeutige Fundstelle. Alte Einheiten sind zunächst ungeprüft und können manuell eingeordnet werden.
+- **Finding und Beziehung.** Ein Finding verbindet zugelassene Einheiten. Wiederholung, Ergänzung und Widerspruch behalten Originalendpunkte. Unabhängige Bestätigung erfordert eine ausdrückliche manuelle Beurteilung. Offensichtliche wörtliche Wiederholungen werden auch bei überlappenden Ausschnitten zurückgewiesen. Frühere supports-Paare behalten ihre Endpunkte mit offenem Beziehungstyp. Themenähnlichkeit führt zu keinem Finding.
+
+Aus A bleibt die schlanke, beleggebundene Einheit erhalten. Die dokumentierten Kollisionen gleicher Texte schließen Identität über Textgleichheit aus. B zeigte auffindbare Zitate bei überbehaupteter Kausalität. Quellenübereinstimmung und fachliche Aussage bleiben deshalb getrennt. C zeigte eine Relation ohne zweite verknüpfte Dokumentseite. Jede Produktrelation fordert beide Endpunkte. D1/D2 zeigten stabile technische Anker, aber auch Treffer am Promptkatalog statt am Original und leere Bedeutungsfelder. Technische Referenzen sind daher keine Quelle und kein semantischer Nachweis. Die historischen Versuche wurden nicht erneut ausgeführt. [Historische A/B/C/D-Bewertung](https://github.com/ChristianU-dev/ux-maind-docling/blob/b9a1b17/docs/ANALYSIS_AUDIT.md)
+
+Die lokale Installation enthält Docling 2.145.0, Docling Core 2.105.0 und LiteLLM 1.106.6. Native Text-, Tabellen-, Bild- und Geometrieobjekte bleiben maßgeblich. Docling Graph bietet getrennt Graphkonversion und Provenienzbindung, ist im getesteten Produkt nicht installiert und löst die nachgewiesene fachliche Zulassung nicht. Für PPTX speichert der native Backend Seitenmaße und Provenienz, im Referenzpaket jedoch keine gerenderten Folien. Die App zeigt die rekonstruierte Struktur und stellt die unveränderte Originaldatei bereit. [Docling-Dokumentmodell](https://docling-project.github.io/docling/reference/docling_document/) · [Docling Graph](https://github.com/docling-project/docling-graph)
+
+Modellmetadaten kommen aus dem gebündelten LiteLLM-Katalog. Ein unbekanntes Fenster oder eine unbekannte Fähigkeit bleibt als unbekannt sichtbar. Ein App-Eingabebudget ist eine technische Grenze, kein behauptetes Modelllimit. Ollama wird auf explizit konfigurierte Loopback-Adressen begrenzt. Mistral ist als LiteLLM-Route wählbar. Ein optional gespeicherter Schlüssel wird mit Windows-DPAPI an das Windows-Konto gebunden. [LiteLLM Ollama](https://docs.litellm.ai/docs/providers/ollama) · [LiteLLM Mistral](https://docs.litellm.ai/docs/providers/mistral)
+
+## Fortschreibung in 0.5.3
+
+Die native Struktur ist Eingangskontext. Quellenanker werden aus exakten Vorkommen erzeugt. Ein Handle für angrenzenden Kontext darf nur im Kontextfeld zitiert werden. Messungen bleiben ohne erzwungene Scope-Zuschreibung zulässig. Grammatische Negation kann einen explizit belegten Geltungsbereich tragen. Technisch valide Quellbindung und fachliche UX-Eignung bleiben getrennt.
+
+Phase A enthält keinen Codebook-Einfluss und setzt im Textadapter UX-Relevanz auf offen. Eine fachliche Beurteilung mit Beleg ist eine lokale Überlagerung. Phase B erlaubt nur die freiwillige Verknüpfung einer identifizierbaren, originalen Studienannotation. Sie ersetzt keine Modellinformation. Automatische Schemainduktion, zweite Parsing-Pipeline und Graphpflicht wurden verworfen.
+
+Wortbasierte Suche reicht bei Paraphrasen nicht aus. Ein transparenter, begrenzter Vorschlag ohne notwendige Wortüberschneidung ergänzt sie. Beliebige belegte Paare bleiben manuell prüfbar. Eine gemeinsame Synthese aus mehr als zwei Einheiten setzt untereinander geprüfte, vereinbare Beziehungen voraus. Die Zahl möglicher Paare ist kein Qualitätsnachweis.
+
+Ollama meldet Vision, Thinking und Architekturfenster über das lokale `/api/show`. Das Fenster wird beim Aufruf separat begrenzt. LiteLLM übergibt für Qwen3 die geprüfte Einstellung als Ollama-Thinking-Schalter und für strukturierte Ollama-Ausgaben das native JSON-Schema. Modellgrenze, Budget und gemeldeter Verbrauch bleiben getrennt. [Ollama-Modellmetadaten](https://docs.ollama.com/api/show) · [LiteLLM Tokenverbrauch](https://docs.litellm.ai/docs/completion/token_usage)

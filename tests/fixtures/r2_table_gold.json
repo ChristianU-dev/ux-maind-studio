@@ -1,0 +1,1544 @@
+{
+  "origin": "Synthetic R1-generated gold, technical regression only",
+  "document": {
+    "schema_name": "DoclingDocument",
+    "version": "1.10.0",
+    "name": "Synthetic native table gold",
+    "furniture": {
+      "self_ref": "#/furniture",
+      "children": [],
+      "content_layer": "furniture",
+      "name": "_root_",
+      "label": "unspecified"
+    },
+    "body": {
+      "self_ref": "#/body",
+      "children": [
+        {
+          "$ref": "#/texts/0"
+        },
+        {
+          "$ref": "#/texts/1"
+        },
+        {
+          "$ref": "#/tables/0"
+        },
+        {
+          "$ref": "#/texts/2"
+        }
+      ],
+      "content_layer": "body",
+      "name": "_root_",
+      "label": "unspecified"
+    },
+    "groups": [],
+    "texts": [
+      {
+        "self_ref": "#/texts/0",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "section_header",
+        "prov": [],
+        "orig": "Task context",
+        "text": "Task context",
+        "level": 1
+      },
+      {
+        "self_ref": "#/texts/1",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "paragraph",
+        "prov": [],
+        "orig": "Question ä é 😀?",
+        "text": "Question ä é 😀?"
+      },
+      {
+        "self_ref": "#/texts/2",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "paragraph",
+        "prov": [],
+        "orig": "Answer: not hidden.",
+        "text": "Answer: not hidden."
+      }
+    ],
+    "pictures": [],
+    "tables": [
+      {
+        "self_ref": "#/tables/0",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "table",
+        "prov": [],
+        "captions": [],
+        "references": [],
+        "footnotes": [],
+        "data": {
+          "table_cells": [
+            {
+              "row_span": 2,
+              "col_span": 1,
+              "start_row_offset_idx": 0,
+              "end_row_offset_idx": 2,
+              "start_col_offset_idx": 0,
+              "end_col_offset_idx": 1,
+              "text": "Task",
+              "column_header": true,
+              "row_header": false,
+              "row_section": false,
+              "fillable": false
+            },
+            {
+              "row_span": 1,
+              "col_span": 3,
+              "start_row_offset_idx": 0,
+              "end_row_offset_idx": 1,
+              "start_col_offset_idx": 1,
+              "end_col_offset_idx": 4,
+              "text": "Timing",
+              "column_header": true,
+              "row_header": false,
+              "row_section": false,
+              "fillable": false
+            },
+            {
+              "row_span": 1,
+              "col_span": 1,
+              "start_row_offset_idx": 1,
+              "end_row_offset_idx": 2,
+              "start_col_offset_idx": 1,
+              "end_col_offset_idx": 2,
+              "text": "Single",
+              "column_header": true,
+              "row_header": false,
+              "row_section": false,
+              "fillable": false
+            },
+            {
+              "row_span": 1,
+              "col_span": 1,
+              "start_row_offset_idx": 1,
+              "end_row_offset_idx": 2,
+              "start_col_offset_idx": 2,
+              "end_col_offset_idx": 3,
+              "text": "Total",
+              "column_header": true,
+              "row_header": false,
+              "row_section": false,
+              "fillable": false
+            },
+            {
+              "row_span": 1,
+              "col_span": 1,
+              "start_row_offset_idx": 1,
+              "end_row_offset_idx": 2,
+              "start_col_offset_idx": 3,
+              "end_col_offset_idx": 4,
+              "text": "Note",
+              "column_header": true,
+              "row_header": false,
+              "row_section": false,
+              "fillable": false
+            },
+            {
+              "row_span": 2,
+              "col_span": 1,
+              "start_row_offset_idx": 2,
+              "end_row_offset_idx": 4,
+              "start_col_offset_idx": 0,
+              "end_col_offset_idx": 1,
+              "text": "T1",
+              "column_header": false,
+              "row_header": true,
+              "row_section": false,
+              "fillable": false
+            },
+            {
+              "row_span": 1,
+              "col_span": 1,
+              "start_row_offset_idx": 2,
+              "end_row_offset_idx": 3,
+              "start_col_offset_idx": 1,
+              "end_col_offset_idx": 2,
+              "text": "42",
+              "column_header": false,
+              "row_header": false,
+              "row_section": false,
+              "fillable": false
+            },
+            {
+              "row_span": 1,
+              "col_span": 1,
+              "start_row_offset_idx": 2,
+              "end_row_offset_idx": 3,
+              "start_col_offset_idx": 2,
+              "end_col_offset_idx": 3,
+              "text": "42",
+              "column_header": false,
+              "row_header": false,
+              "row_section": false,
+              "fillable": false
+            },
+            {
+              "row_span": 1,
+              "col_span": 1,
+              "start_row_offset_idx": 2,
+              "end_row_offset_idx": 3,
+              "start_col_offset_idx": 3,
+              "end_col_offset_idx": 4,
+              "text": "same",
+              "column_header": false,
+              "row_header": false,
+              "row_section": false,
+              "fillable": false
+            },
+            {
+              "row_span": 1,
+              "col_span": 1,
+              "start_row_offset_idx": 3,
+              "end_row_offset_idx": 4,
+              "start_col_offset_idx": 1,
+              "end_col_offset_idx": 2,
+              "text": "42",
+              "column_header": false,
+              "row_header": false,
+              "row_section": false,
+              "fillable": false
+            },
+            {
+              "row_span": 1,
+              "col_span": 1,
+              "start_row_offset_idx": 3,
+              "end_row_offset_idx": 4,
+              "start_col_offset_idx": 2,
+              "end_col_offset_idx": 3,
+              "text": "84",
+              "column_header": false,
+              "row_header": false,
+              "row_section": false,
+              "fillable": false
+            },
+            {
+              "row_span": 1,
+              "col_span": 1,
+              "start_row_offset_idx": 3,
+              "end_row_offset_idx": 4,
+              "start_col_offset_idx": 3,
+              "end_col_offset_idx": 4,
+              "text": "same",
+              "column_header": false,
+              "row_header": false,
+              "row_section": false,
+              "fillable": false
+            }
+          ],
+          "num_rows": 4,
+          "num_cols": 4,
+          "orientation": "rot_0",
+          "grid": [
+            [
+              {
+                "row_span": 2,
+                "col_span": 1,
+                "start_row_offset_idx": 0,
+                "end_row_offset_idx": 2,
+                "start_col_offset_idx": 0,
+                "end_col_offset_idx": 1,
+                "text": "Task",
+                "column_header": true,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 3,
+                "start_row_offset_idx": 0,
+                "end_row_offset_idx": 1,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 4,
+                "text": "Timing",
+                "column_header": true,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 3,
+                "start_row_offset_idx": 0,
+                "end_row_offset_idx": 1,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 4,
+                "text": "Timing",
+                "column_header": true,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 3,
+                "start_row_offset_idx": 0,
+                "end_row_offset_idx": 1,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 4,
+                "text": "Timing",
+                "column_header": true,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              }
+            ],
+            [
+              {
+                "row_span": 2,
+                "col_span": 1,
+                "start_row_offset_idx": 0,
+                "end_row_offset_idx": 2,
+                "start_col_offset_idx": 0,
+                "end_col_offset_idx": 1,
+                "text": "Task",
+                "column_header": true,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 1,
+                "end_row_offset_idx": 2,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 2,
+                "text": "Single",
+                "column_header": true,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 1,
+                "end_row_offset_idx": 2,
+                "start_col_offset_idx": 2,
+                "end_col_offset_idx": 3,
+                "text": "Total",
+                "column_header": true,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 1,
+                "end_row_offset_idx": 2,
+                "start_col_offset_idx": 3,
+                "end_col_offset_idx": 4,
+                "text": "Note",
+                "column_header": true,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              }
+            ],
+            [
+              {
+                "row_span": 2,
+                "col_span": 1,
+                "start_row_offset_idx": 2,
+                "end_row_offset_idx": 4,
+                "start_col_offset_idx": 0,
+                "end_col_offset_idx": 1,
+                "text": "T1",
+                "column_header": false,
+                "row_header": true,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 2,
+                "end_row_offset_idx": 3,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 2,
+                "text": "42",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 2,
+                "end_row_offset_idx": 3,
+                "start_col_offset_idx": 2,
+                "end_col_offset_idx": 3,
+                "text": "42",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 2,
+                "end_row_offset_idx": 3,
+                "start_col_offset_idx": 3,
+                "end_col_offset_idx": 4,
+                "text": "same",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              }
+            ],
+            [
+              {
+                "row_span": 2,
+                "col_span": 1,
+                "start_row_offset_idx": 2,
+                "end_row_offset_idx": 4,
+                "start_col_offset_idx": 0,
+                "end_col_offset_idx": 1,
+                "text": "T1",
+                "column_header": false,
+                "row_header": true,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 3,
+                "end_row_offset_idx": 4,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 2,
+                "text": "42",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 3,
+                "end_row_offset_idx": 4,
+                "start_col_offset_idx": 2,
+                "end_col_offset_idx": 3,
+                "text": "84",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              },
+              {
+                "row_span": 1,
+                "col_span": 1,
+                "start_row_offset_idx": 3,
+                "end_row_offset_idx": 4,
+                "start_col_offset_idx": 3,
+                "end_col_offset_idx": 4,
+                "text": "same",
+                "column_header": false,
+                "row_header": false,
+                "row_section": false,
+                "fillable": false
+              }
+            ]
+          ]
+        },
+        "annotations": []
+      }
+    ],
+    "key_value_items": [],
+    "form_items": [],
+    "pages": {}
+  },
+  "records": [
+    {
+      "ref": "#/texts/0",
+      "kind": "text",
+      "value": "Task context",
+      "label": "section_header",
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          }
+        ]
+      }
+    },
+    {
+      "ref": "#/texts/1",
+      "kind": "text",
+      "value": "Question ä é 😀?",
+      "label": "paragraph",
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/0",
+            "text": "Task context"
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/texts/1"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 0,
+      "column": 0,
+      "value": "Task",
+      "headers": [],
+      "row_context": [
+        {
+          "column": 1,
+          "value": "Timing",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "Timing",
+          "header": false
+        }
+      ],
+      "is_header": true,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 0,
+      "column": 1,
+      "value": "Timing",
+      "headers": [],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "Task",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "Timing",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "Timing",
+          "header": false
+        }
+      ],
+      "is_header": true,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 1,
+      "column": 1,
+      "value": "Single",
+      "headers": [
+        "Timing"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "Task",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "Total",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "Note",
+          "header": false
+        }
+      ],
+      "is_header": true,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 1,
+      "column": 2,
+      "value": "Total",
+      "headers": [
+        "Timing"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "Task",
+          "header": false
+        },
+        {
+          "column": 1,
+          "value": "Single",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "Note",
+          "header": false
+        }
+      ],
+      "is_header": true,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 1,
+      "column": 3,
+      "value": "Note",
+      "headers": [
+        "Timing"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "Task",
+          "header": false
+        },
+        {
+          "column": 1,
+          "value": "Single",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "Total",
+          "header": false
+        }
+      ],
+      "is_header": true,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 2,
+      "column": 0,
+      "value": "T1",
+      "headers": [
+        "Task"
+      ],
+      "row_context": [
+        {
+          "column": 1,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "42",
+          "header": false
+        }
+      ],
+      "is_header": true,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 2,
+      "column": 1,
+      "value": "42",
+      "headers": [
+        "Timing",
+        "Single"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 2,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "same",
+          "header": false
+        }
+      ],
+      "is_header": false,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 2,
+      "column": 2,
+      "value": "42",
+      "headers": [
+        "Timing",
+        "Total"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 1,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "same",
+          "header": false
+        }
+      ],
+      "is_header": false,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 2,
+      "column": 3,
+      "value": "same",
+      "headers": [
+        "Timing",
+        "Note"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 1,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "42",
+          "header": false
+        }
+      ],
+      "is_header": false,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 3,
+      "column": 1,
+      "value": "42",
+      "headers": [
+        "Timing",
+        "Single"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 2,
+          "value": "84",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "same",
+          "header": false
+        }
+      ],
+      "is_header": false,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 3,
+      "column": 2,
+      "value": "84",
+      "headers": [
+        "Timing",
+        "Total"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 1,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "same",
+          "header": false
+        }
+      ],
+      "is_header": false,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 3,
+      "column": 3,
+      "value": "same",
+      "headers": [
+        "Timing",
+        "Note"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 1,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "84",
+          "header": false
+        }
+      ],
+      "is_header": false,
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [
+          {
+            "ref": "#/texts/1",
+            "text": "Question ä é 😀?"
+          },
+          {
+            "ref": "#/texts/2",
+            "text": "Answer: not hidden."
+          }
+        ],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/tables/0"
+        ]
+      }
+    },
+    {
+      "ref": "#/texts/2",
+      "kind": "text",
+      "value": "Answer: not hidden.",
+      "label": "paragraph",
+      "structure": {
+        "level": 1,
+        "parent": "#/body",
+        "pages": [],
+        "neighbors": [],
+        "headings": [
+          "Task context"
+        ],
+        "chunk_refs": [
+          "#/texts/2"
+        ]
+      }
+    }
+  ],
+  "cells": [
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 0,
+      "column": 0,
+      "value": "Task",
+      "headers": [],
+      "row_context": [
+        {
+          "column": 1,
+          "value": "Timing",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "Timing",
+          "header": false
+        }
+      ],
+      "is_header": true
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 0,
+      "column": 1,
+      "value": "Timing",
+      "headers": [],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "Task",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "Timing",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "Timing",
+          "header": false
+        }
+      ],
+      "is_header": true
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 0,
+      "column": 2,
+      "value": "Timing",
+      "headers": [],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "Task",
+          "header": false
+        },
+        {
+          "column": 1,
+          "value": "Timing",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "Timing",
+          "header": false
+        }
+      ],
+      "is_header": true
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 0,
+      "column": 3,
+      "value": "Timing",
+      "headers": [],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "Task",
+          "header": false
+        },
+        {
+          "column": 1,
+          "value": "Timing",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "Timing",
+          "header": false
+        }
+      ],
+      "is_header": true
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 1,
+      "column": 0,
+      "value": "Task",
+      "headers": [
+        "Task"
+      ],
+      "row_context": [
+        {
+          "column": 1,
+          "value": "Single",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "Total",
+          "header": false
+        }
+      ],
+      "is_header": true
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 1,
+      "column": 1,
+      "value": "Single",
+      "headers": [
+        "Timing"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "Task",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "Total",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "Note",
+          "header": false
+        }
+      ],
+      "is_header": true
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 1,
+      "column": 2,
+      "value": "Total",
+      "headers": [
+        "Timing"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "Task",
+          "header": false
+        },
+        {
+          "column": 1,
+          "value": "Single",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "Note",
+          "header": false
+        }
+      ],
+      "is_header": true
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 1,
+      "column": 3,
+      "value": "Note",
+      "headers": [
+        "Timing"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "Task",
+          "header": false
+        },
+        {
+          "column": 1,
+          "value": "Single",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "Total",
+          "header": false
+        }
+      ],
+      "is_header": true
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 2,
+      "column": 0,
+      "value": "T1",
+      "headers": [
+        "Task"
+      ],
+      "row_context": [
+        {
+          "column": 1,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "42",
+          "header": false
+        }
+      ],
+      "is_header": true
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 2,
+      "column": 1,
+      "value": "42",
+      "headers": [
+        "Timing",
+        "Single"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 2,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "same",
+          "header": false
+        }
+      ],
+      "is_header": false
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 2,
+      "column": 2,
+      "value": "42",
+      "headers": [
+        "Timing",
+        "Total"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 1,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "same",
+          "header": false
+        }
+      ],
+      "is_header": false
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 2,
+      "column": 3,
+      "value": "same",
+      "headers": [
+        "Timing",
+        "Note"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 1,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "42",
+          "header": false
+        }
+      ],
+      "is_header": false
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 3,
+      "column": 0,
+      "value": "T1",
+      "headers": [
+        "Task"
+      ],
+      "row_context": [
+        {
+          "column": 1,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "84",
+          "header": false
+        }
+      ],
+      "is_header": true
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 3,
+      "column": 1,
+      "value": "42",
+      "headers": [
+        "Timing",
+        "Single"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 2,
+          "value": "84",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "same",
+          "header": false
+        }
+      ],
+      "is_header": false
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 3,
+      "column": 2,
+      "value": "84",
+      "headers": [
+        "Timing",
+        "Total"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 1,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 3,
+          "value": "same",
+          "header": false
+        }
+      ],
+      "is_header": false
+    },
+    {
+      "ref": "#/tables/0",
+      "kind": "cell",
+      "row": 3,
+      "column": 3,
+      "value": "same",
+      "headers": [
+        "Timing",
+        "Note"
+      ],
+      "row_context": [
+        {
+          "column": 0,
+          "value": "T1",
+          "header": true
+        },
+        {
+          "column": 1,
+          "value": "42",
+          "header": false
+        },
+        {
+          "column": 2,
+          "value": "84",
+          "header": false
+        }
+      ],
+      "is_header": false
+    }
+  ]
+}

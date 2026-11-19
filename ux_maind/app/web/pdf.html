@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'none'"
+    />
+    <title>PDF.js · Dokumentdarstellung</title>
+    <link rel="stylesheet" href="./generated/pdfjs/web/pdf_viewer.css" />
+    <link rel="stylesheet" href="./pdf.css" />
+    <script type="module" src="./pdf.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="pdf-toolbar-main">
+        <strong id="label" class="pdf-source-badge">PDF wird geladen …</strong>
+        <nav aria-label="PDF-Navigation">
+          <div class="pdf-btn-group">
+            <button id="previous" type="button" aria-label="Vorige PDF-Seite" title="Vorige Seite">‹</button>
+            <label class="pdf-page-field" aria-label="Aktuelle Seite">
+              <input id="page" type="number" min="1" value="1" />
+              <span id="pages">/ 1</span>
+            </label>
+            <button id="next" type="button" aria-label="Nächste PDF-Seite" title="Nächste Seite">›</button>
+          </div>
+          <label class="pdf-zoom-field" aria-label="Zoommodus">
+            <select id="zoom">
+              <option value="page-fit">Ganze Seite</option>
+              <option value="page-width">Seitenbreite</option>
+              <option value="custom">Eigener Zoom</option>
+            </select>
+          </label>
+          <label class="pdf-pct-field" title="Zoom in Prozent">
+            <input id="zoom-percent" type="number" min="1" step="any" value="100" aria-label="PDF-Zoom %" />
+            <span>%</span>
+          </label>
+          <button
+            id="find-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="find-form"
+          >
+            Suche
+          </button>
+        </nav>
+      </div>
+      <div id="find-form" role="search" aria-label="PDF-Textsuche" hidden>
+        <input
+          type="search"
+          id="find-query"
+          disabled
+          aria-label="PDF-Textsuche"
+          placeholder="Zitat oder Begriff im PDF suchen …"
+        />
+        <button id="find-start" type="button" disabled>Suchen</button>
+        <button type="button" id="find-previous" disabled title="Voriger Treffer">
+          ‹ Voriger
+        </button>
+        <button type="button" id="find-next" disabled title="Nächster Treffer">
+          Nächster ›
+        </button>
+      </div>
+      <p id="status" role="status">
+        Information rechts ansteuern, um ihre Belegstelle hervorzuheben.
+      </p>
+    </header>
+    <main id="pdf-surface">
+      <div id="viewerContainer"><div class="pdfViewer"></div></div>
+    </main>
+  </body>
+</html>

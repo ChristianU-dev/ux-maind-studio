@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1560 740" width="1560" height="740">
+
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 22px 'Segoe UI', Inter, system-ui, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 13px 'Segoe UI', Inter, system-ui, sans-serif; fill: #475569; }
+      .lane-title { font: 700 13px 'Segoe UI', Inter, system-ui, sans-serif; fill: #0f172a; letter-spacing: 0.04em; }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box-teal { fill: #f0fdfa; stroke: #0d9488; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-sky { fill: #f0f9ff; stroke: #0284c7; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-amber { fill: #fffbeb; stroke: #d97706; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-emerald { fill: #ecfdf5; stroke: #059669; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-rose { fill: #fff1f2; stroke: #e11d48; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-slate { fill: #f1f5f9; stroke: #64748b; stroke-width: 1.6; rx: 10; ry: 10; }
+      .lane { fill: #f1f5f9; stroke: #cbd5e1; stroke-width: 1.2; stroke-dasharray: 5 4; rx: 14; ry: 14; }
+      .box-head { font: 700 13.5px 'Segoe UI', Inter, system-ui, sans-serif; fill: #0f172a; }
+      .box-code { font: 600 11.5px Consolas, 'JetBrains Mono', monospace; fill: #0f766e; }
+      .box-text { font: 400 12px 'Segoe UI', Inter, system-ui, sans-serif; fill: #334155; }
+      .badge { font: 700 10.5px Consolas, monospace; fill: #ffffff; }
+      .edge { stroke: #475569; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+      .edge-teal { stroke: #0d9488; stroke-width: 2.0; fill: none; marker-end: url(#arrow-teal); }
+      .edge-amber { stroke: #d97706; stroke-width: 1.9; stroke-dasharray: 6 4; fill: none; marker-end: url(#arrow-amber); }
+      .edge-label { font: 600 11px 'Segoe UI', Inter, system-ui, sans-serif; fill: #334155; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
+    </marker>
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0d9488" />
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#d97706" />
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1560" height="740" class="bg" />
+  <text x="32" y="42" class="title">Detaildiagramm 05 — Synchroner Dual-View-Inspektor, Forscher-Review &amp; A4-Übergabe</text>
+  <text x="32" y="65" class="subtitle">Wie menschliche Prüfung, unveränderliche KI-Belege und druckfertige Ergebnisdokumente ineinandergreifen</text>
+  <rect x="24" y="88" width="1512" height="624" class="lane" />
+<text x="42" y="112" class="lane-title">GESCHLOSSENER PRÜF- &amp; ÜBERGABEKREISLAUF (SYNCHRONER DUAL-VIEW · AUDIT-LEDGER · A4-HANDOUT)</text>
+<rect x="44" y="134" width="460" height="250" class="box-slate" />
+<rect x="373" y="145" width="119" height="20" rx="5" fill="#475569" />
+<text x="433" y="159" text-anchor="middle" class="badge">LINKS: ORIGINAL</text>
+<text x="58" y="160" class="box-head">Linkes Panel: Unverändertes Original / Anzeige-PDF</text>
+<text x="58" y="179" class="box-code">PDF.js (pdf.html / pdf.js) &amp; Plain-Text-Viewer</text>
+<text x="58" y="199" class="box-text">• PDF: Direktes Rendering der Originaldatei mit Textsuche</text>
+<text x="58" y="217" class="box-text">• PPTX / DOCX / ODT: Lokales LibreOffice-Anzeige-PDF</text>
+<text x="58" y="235" class="box-text">  (klar gekennzeichnet als ‚Anzeige-Derivat, keine Quelle‘)</text>
+<text x="58" y="253" class="box-text">• TXT / MD / VTT: Zeichenexakte &lt;mark&gt;-Hervorhebung</text>
+<text x="58" y="271" class="box-text">• Rückkopplungsfreie Seitensynchronisation beim Scrollen</text>
+<text x="58" y="289" class="box-text">  (lastPdfReportedPageRef verhindert Scroll-Snapping)</text>
+<rect x="554" y="134" width="460" height="250" class="box-teal" />
+<rect x="883" y="145" width="119" height="20" rx="5" fill="#0d9488" />
+<text x="943" y="159" text-anchor="middle" class="badge">RECHTS: DOCLING</text>
+<text x="568" y="160" class="box-head">Rechtes Panel: Docling-Lesefassung &amp; Seitengeometrie</text>
+<text x="568" y="179" class="box-code">DoclingReader.jsx &amp; &lt;docling-img&gt; Web Component</text>
+<text x="568" y="199" class="box-text">• Lesefassung: Alle Absätze, volle Tabellen (400 Zeilen),</text>
+<text x="568" y="217" class="box-text">  Wort-Durchstreichungen, Speaker Notes &amp; Vision-Boxen</text>
+<text x="568" y="235" class="box-text">• Geometrie-Modus: Original-Seitenbild mit interaktiven</text>
+<text x="568" y="253" class="box-text">  SVG-Bounding-Boxen aller erkannten Docling-Elemente</text>
+<text x="568" y="271" class="box-text">• OCR-Fallback: Kein Textlayer-Treffer im Scan-PDF -&gt;</text>
+<text x="568" y="289" class="box-text">  automatischer Wechsel auf präzise Docling-BBox!</text>
+<rect x="1064" y="134" width="450" height="250" class="box-sky" />
+<rect x="1418" y="145" width="84" height="20" rx="5" fill="#0284c7" />
+<text x="1460" y="159" text-anchor="middle" class="badge">PROVENANCE</text>
+<text x="1078" y="160" class="box-head">Aktive Finding-Belegleiste &amp; Transparenz-Modals</text>
+<text x="1078" y="179" class="box-code">lx-finding-context-strip · /api/model-input</text>
+<text x="1078" y="199" class="box-text">• Zeigt beim Sprung aus Finding/Graph oben alle Belege</text>
+<text x="1078" y="217" class="box-text">  dieses Befunds über alle Dokumente zum Durchklicken</text>
+<text x="1078" y="235" class="box-text">• ‚Belege (N)‘: Alle verankerten A-Zitate des Dokuments</text>
+<text x="1078" y="253" class="box-text">• ‚Elemente‘: Vollsuche über #/texts/, #/tables/, #/pictures/</text>
+<text x="1078" y="271" class="box-text">• ‚Modell-Input‘: Exakter an das LLM gesendeter Text</text>
+<text x="1078" y="289" class="box-text">• Direkt-Download als .MD, Docling JSON oder Original</text>
+<line x1="504" y1="259" x2="554" y2="259" class="edge-teal" />
+<text x="529" y="252" text-anchor="middle" class="edge-label">Seite &amp; Zitat sync</text>
+<line x1="1014" y1="259" x2="1064" y2="259" class="edge" />
+<text x="1039" y="252" text-anchor="middle" class="edge-label">Kontext</text>
+<rect x="44" y="434" width="460" height="248" class="box-amber" />
+<rect x="436" y="445" width="56" height="20" rx="5" fill="#d97706" />
+<text x="464" y="459" text-anchor="middle" class="badge">REVIEW</text>
+<text x="58" y="460" class="box-head">Menschliche Forscher-Entscheidung (Human-in-the-Loop)</text>
+<text x="58" y="479" class="box-code">ResearcherReviewBlock · /api/ux-decision</text>
+<text x="58" y="499" class="box-text">• Bestätigen (HUMAN_CONFIRMED): Zitat &amp; Deutung geprüft</text>
+<text x="58" y="517" class="box-text">• Korrigieren (HUMAN_CORRECTED): Titel, Scope, Valenz,</text>
+<text x="58" y="535" class="box-text">  UX-Heuristik (Nielsen/ISO) oder Hypothese präzisieren</text>
+<text x="58" y="553" class="box-text">• Verwerfen (HUMAN_REJECTED): Halluzination / Nebenaspekt</text>
+<text x="58" y="571" class="box-text">  aussortieren (inkl. Pflichtbegründung im Audit-Trail)</text>
+<text x="58" y="589" class="box-text">• Carry-Forward überträgt Reviews auf neue A-Läufe</text>
+<rect x="554" y="434" width="460" height="248" class="box-slate" />
+<rect x="911" y="445" width="91" height="20" rx="5" fill="#475569" />
+<text x="957" y="459" text-anchor="middle" class="badge">AUDIT TRAIL</text>
+<text x="568" y="460" class="box-head">Revisionssichere Trennung: Modell vs. Mensch</text>
+<text x="568" y="479" class="box-code">ux_objects (immutable) + ux_decisions (append-only)</text>
+<text x="568" y="499" class="box-text">• KI-Rohvorschlag bleibt für die BA-Evaluation unverändert</text>
+<text x="568" y="517" class="box-text">• Aktive Ansicht berechnet effective = Modell + Korrektur</text>
+<text x="568" y="535" class="box-text">• Verworfene Beobachtungen markieren abhängige Findings</text>
+<text x="568" y="553" class="box-text">  sofort mit Warnflag contains_rejected_support</text>
+<text x="568" y="571" class="box-text">• Verworfene Findings werden aus Diagrammen, Graphen</text>
+<text x="568" y="589" class="box-text">  und aktivem Übergabe-Handout herausgefiltert</text>
+<rect x="1064" y="434" width="450" height="248" class="box-emerald" />
+<rect x="1418" y="445" width="84" height="20" rx="5" fill="#059669" />
+<text x="1460" y="459" text-anchor="middle" class="badge">HANDOUT A4</text>
+<text x="1078" y="460" class="box-head">Geschlossene Ergebnisübergabe (A4-Handout &amp; Report)</text>
+<text x="1078" y="479" class="box-code">telemetry.html_handout() · research.report()</text>
+<text x="1078" y="499" class="box-text">• Druckoptimiertes A4-HTML-Handout (Strg+P -&gt; PDF)</text>
+<text x="1078" y="517" class="box-text">• Enthält Studien-KPIs, bestätigte/korrigierte Findings,</text>
+<text x="1078" y="535" class="box-text">  UX-Heuristiken, Sprecherbreite &amp; wörtliche Zitatanker</text>
+<text x="1078" y="553" class="box-text">• Dokumentiert verworfene KI-Vorschläge transparent im</text>
+<text x="1078" y="571" class="box-text">  separaten Prüfanhang für wissenschaftliche Nachvollziehbarkeit</text>
+<text x="1078" y="589" class="box-text">• Direkt im Projekt-Ausgabeordner archivierbar</text>
+<path d="M 784 384 L 784 408 L 274 408 L 274 434" class="edge-teal" />
+<text x="530" y="404" text-anchor="middle" class="edge-label">Geprüfte Fundstelle</text>
+<line x1="504" y1="558" x2="554" y2="558" class="edge" />
+<text x="529" y="551" text-anchor="middle" class="edge-label">Append-Only</text>
+<line x1="1014" y1="558" x2="1064" y2="558" class="edge-teal" />
+<text x="1039" y="551" text-anchor="middle" class="edge-label">Kuratierte Synthese</text>
+</svg>

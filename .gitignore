@@ -1,0 +1,35 @@
+# Local configuration and credentials
+config/local.toml
+.env
+.env.*
+!.env.example
+.venv/
+.local-deps/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+# Source corpora and generated results must never leak into code commits
+data/
+runs/
+outputs/
+artifacts/
+.codex-attachments/
+Meine Zotero Bibliothek/
+*.log
+*.bak
+*.tmp
+.DS_Store
+build/
+*.egg-info/
+dist/
+frontend/node_modules/
+ux_maind/app/web/generated/
+
+# Compatibility files used only by the existing local Windows archive task.
+/config/native_sources.json
+/ux_maind/archive_sync.py
+/ux_maind/source_registry.py

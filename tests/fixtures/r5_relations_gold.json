@@ -1,0 +1,38 @@
+{
+  "version": "r5-relations-pre-registered/1",
+  "synthetic_only": true,
+  "protocol": "Fixed before retrieval implementation. Development examples D are excluded from evaluation E. Within the closed evaluation set only listed positives are relevant; remaining cross-document pairs are negatives by the independently assigned task/person scenarios. Ranking is not semantic confirmation. Statements alone are embedded, without gold labels or task ids. Report recall/precision at 1 and 5, false positives and missed pairs. No tuning on E.",
+  "units": [
+    {"id":"D1","split":"development","source":"tasks.docx","kind":"question","task":"D-A","person":"P1","statement":"Wie war das Bezahlen?"},
+    {"id":"D2","split":"development","source":"answers.odt","kind":"answer","task":"D-A","person":"P1","statement":"Checkout war sofort erledigt."},
+    {"id":"D3","split":"development","source":"report.pdf","kind":"report","task":"D-B","person":"P2","statement":"Problem beim Speichern."},
+    {"id":"D4","split":"development","source":"interview.txt","kind":"report","task":"D-B","person":"P2","statement":"Sicherung nicht möglich."},
+    {"id":"E01","split":"evaluation","source":"tasks.docx","kind":"report","task":"save","person":"P1","statement":"Ich konnte den Bearbeitungsstand nicht dauerhaft hinterlegen."},
+    {"id":"E02","split":"evaluation","source":"answers.odt","kind":"observation","task":"save","person":"P1","statement":"Speichern schlug fehl."},
+    {"id":"E03","split":"evaluation","source":"tasks.docx","kind":"question","task":"location","person":"P2","statement":"Wo lässt sich die Lieferanschrift ändern?"},
+    {"id":"E04","split":"evaluation","source":"answers.odt","kind":"answer","task":"location","person":"P2","statement":"Die Zustelladresse bearbeite ich im Kundenkonto."},
+    {"id":"E05","split":"evaluation","source":"tasks.docx","kind":"instruction","task":"undo","person":"P3","statement":"Machen Sie die letzte Änderung rückgängig."},
+    {"id":"E06","split":"evaluation","source":"execution.pptx","kind":"observation","task":"undo","person":"P3","statement":"Der vorherige Zustand wurde nach Betätigen des Zurückpfeils wiederhergestellt."},
+    {"id":"E07","split":"evaluation","source":"report.pdf","kind":"report","task":"contrast","person":"P4","statement":"Unter identischen Bedingungen war der Bestätigungsdialog sofort sichtbar."},
+    {"id":"E08","split":"evaluation","source":"interview.txt","kind":"report","task":"contrast","person":"P4","statement":"Bei genau diesem Versuch erschien die Rückfrage auch nach langem Warten nicht."},
+    {"id":"E09","split":"evaluation","source":"tasks.docx","kind":"report","task":"help","person":"P5","statement":"Die Hilfestellung war verständlich."},
+    {"id":"E10","split":"evaluation","source":"answers.odt","kind":"report","task":"help","person":"P5","statement":"Die Erklärung ließ für mich keine Fragen offen."},
+    {"id":"E11","split":"evaluation","source":"execution.pptx","kind":"report","task":"cancel","person":"P6","statement":"Die Transaktion wurde beendet, ohne etwas zu bestellen."},
+    {"id":"E12","split":"evaluation","source":"report.pdf","kind":"report","task":"cancel","person":"P6","statement":"Der Kaufvorgang ist abgebrochen worden."},
+    {"id":"E13","split":"evaluation","source":"screenshot.png","kind":"annotation","task":"error","person":"unknown","statement":"Die Bildlesart beschreibt eine rote Warnung zu ungültigen Zugangsdaten."},
+    {"id":"E14","split":"evaluation","source":"interview.txt","kind":"report","task":"error","person":"unknown","statement":"Eine Fehlermeldung verhinderte die Anmeldung mit dem eingegebenen Kennwort."},
+    {"id":"E15","split":"evaluation","source":"measurements.csv","kind":"measurement","task":"latency","person":"P7","statement":"Einzelwert für den Seitenaufbau: 2,4 s."},
+    {"id":"E16","split":"evaluation","source":"answers.odt","kind":"report","task":"latency","person":"P7","statement":"Nach kurzer Verzögerung war die Anzeige vollständig geladen."},
+    {"id":"E17","split":"evaluation","source":"distractors.txt","kind":"report","task":"other-save","person":"P9","statement":"Speichern schlug fehl."},
+    {"id":"E18","split":"evaluation","source":"distractors.txt","kind":"report","task":"other-help","person":"P9","statement":"Die Hilfestellung war verständlich."},
+    {"id":"E19","split":"evaluation","source":"aggregate.csv","kind":"measurement","task":"other-latency","person":"sample-15","statement":"Mittelwert einer anderen Stichprobe mit 15 Personen: 2,4 s."},
+    {"id":"E20","split":"evaluation","source":"distractors.txt","kind":"report","task":"different-undo","person":"P9","statement":"Es gelang nicht, den vorherigen Zustand wiederherzustellen."}
+  ],
+  "positive_pairs": [
+    ["D1","D2","answers"],["D3","D4","repeats"],
+    ["E01","E02","repeats"],["E03","E04","answers"],["E05","E06","carries_out"],
+    ["E07","E08","contrasts"],["E09","E10","repeats"],["E11","E12","repeats"],
+    ["E13","E14","related_unresolved"],["E15","E16","complements"]
+  ],
+  "critical_negative_pairs": [["E02","E17"],["E09","E18"],["E15","E19"],["E06","E20"]]
+}

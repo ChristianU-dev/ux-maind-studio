@@ -1,0 +1,4 @@
+# Hash-bound synthetic sources must retain their exact Git blob bytes.
+/tests/fixtures/** -text
+/ux_maind/app/web/docling-components.js text eol=lf
+/ux_maind/app/web/cytoscape.min.js text eol=lf

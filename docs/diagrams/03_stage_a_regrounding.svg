@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1560 780" width="1560" height="780">
+
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 22px 'Segoe UI', Inter, system-ui, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 13px 'Segoe UI', Inter, system-ui, sans-serif; fill: #475569; }
+      .lane-title { font: 700 13px 'Segoe UI', Inter, system-ui, sans-serif; fill: #0f172a; letter-spacing: 0.04em; }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box-teal { fill: #f0fdfa; stroke: #0d9488; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-sky { fill: #f0f9ff; stroke: #0284c7; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-amber { fill: #fffbeb; stroke: #d97706; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-emerald { fill: #ecfdf5; stroke: #059669; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-rose { fill: #fff1f2; stroke: #e11d48; stroke-width: 1.8; rx: 10; ry: 10; }
+      .box-slate { fill: #f1f5f9; stroke: #64748b; stroke-width: 1.6; rx: 10; ry: 10; }
+      .lane { fill: #f1f5f9; stroke: #cbd5e1; stroke-width: 1.2; stroke-dasharray: 5 4; rx: 14; ry: 14; }
+      .box-head { font: 700 13.5px 'Segoe UI', Inter, system-ui, sans-serif; fill: #0f172a; }
+      .box-code { font: 600 11.5px Consolas, 'JetBrains Mono', monospace; fill: #0f766e; }
+      .box-text { font: 400 12px 'Segoe UI', Inter, system-ui, sans-serif; fill: #334155; }
+      .badge { font: 700 10.5px Consolas, monospace; fill: #ffffff; }
+      .edge { stroke: #475569; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+      .edge-teal { stroke: #0d9488; stroke-width: 2.0; fill: none; marker-end: url(#arrow-teal); }
+      .edge-amber { stroke: #d97706; stroke-width: 1.9; stroke-dasharray: 6 4; fill: none; marker-end: url(#arrow-amber); }
+      .edge-label { font: 600 11px 'Segoe UI', Inter, system-ui, sans-serif; fill: #334155; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
+    </marker>
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0d9488" />
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#d97706" />
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1560" height="780" class="bg" />
+  <text x="32" y="42" class="title">Detaildiagramm 03 — Stufe A: Evidenzextraktion &amp; Deterministisches Re-Grounding</text>
+  <text x="32" y="65" class="subtitle">Wie UX-mAInd jedes extrahierte Zitat und jeden Zahlenwert zeichen- und zellgenau gegen das Original-DoclingDocument prüft</text>
+  <rect x="24" y="88" width="1512" height="315" class="lane" />
+<text x="42" y="112" class="lane-title">TEIL A1 · VERLUSTFREIE QUELLAUFBEREITUNG &amp; DOCLING-GRAPH SCHEMA-EXTRAKTION</text>
+<rect x="24" y="425" width="1512" height="330" class="lane" />
+<text x="42" y="449" class="lane-title">TEIL A2 · MEHRSTUFIGES DETERMINISTISCHES RE-GROUNDING &amp; KANDIDATEN-HEILUNG</text>
+<rect x="44" y="130" width="350" height="250" class="box-teal" />
+<rect x="326" y="141" width="56" height="20" rx="5" fill="#0d9488" />
+<text x="354" y="155" text-anchor="middle" class="badge">STEP 1</text>
+<text x="58" y="156" class="box-head">1. Temporäre Modell-Quelle</text>
+<text x="58" y="175" class="box-code">evidence.model_source()</text>
+<text x="58" y="195" class="box-text">• Klont DoclingDocument nur für den LLM-Lauf</text>
+<text x="58" y="213" class="box-text">• Injiziert Tabellen-Caption:</text>
+<text x="58" y="231" class="box-text">  [ux_maind: source_ref=#/tables/0 | cols=...]</text>
+<text x="58" y="249" class="box-text">• Bewahrt Worksheet-Namen &amp; Spaltenköpfe</text>
+<text x="58" y="267" class="box-text">• Fallback GRADING_SCALE -&gt; TEXT für DocLang</text>
+<text x="58" y="285" class="box-text">• Projiziert KeyValueItem &amp; FormItem Texte</text>
+<rect x="444" y="130" width="350" height="250" class="box-sky" />
+<rect x="726" y="141" width="56" height="20" rx="5" fill="#0284c7" />
+<text x="754" y="155" text-anchor="middle" class="badge">STEP 2</text>
+<text x="458" y="156" class="box-head">2. Prompt- &amp; Schema-Vertrag</text>
+<text x="458" y="175" class="box-code">UXEvidenceDocument · prompts_config.py</text>
+<text x="458" y="195" class="box-text">• Alle Feld-Descriptions &lt;= 240 Zeichen</text>
+<text x="458" y="213" class="box-text">  (verhindert 250-Zeichen-Abschnitt in Docling-Graph)</text>
+<text x="458" y="231" class="box-text">• scale_direction auf Tiefe 2 voll sichtbar</text>
+<text x="458" y="249" class="box-text">• Editierbarer Basis-Prompt + Zusatzhinweise</text>
+<text x="458" y="267" class="box-text">• Modi: Auto / Direct (One-Pass) / Standard / Dense</text>
+<rect x="844" y="130" width="340" height="250" class="box-teal" />
+<rect x="1116" y="141" width="56" height="20" rx="5" fill="#0d9488" />
+<text x="1144" y="155" text-anchor="middle" class="badge">STEP 3</text>
+<text x="858" y="156" class="box-head">3. Docling-Graph + LiteLLM Aufruf</text>
+<text x="858" y="175" class="box-code">native_graph.py · _diag_lock</text>
+<text x="858" y="195" class="box-text">• Thread-sichere Request-Diagnose (_diag_lock)</text>
+<text x="858" y="213" class="box-text">• httpx.Timeout + Chunk-Idle- &amp; Wall-Clock-Watchdog</text>
+<text x="858" y="231" class="box-text">• Kontrollierte Retries &amp; Live-Konsolen-Diagnose</text>
+<text x="858" y="249" class="box-text">• Erfasst prompt-, completion-, reasoning- &amp;</text>
+<text x="858" y="267" class="box-text">  cached_tokens exakt im Laufbeleg</text>
+<rect x="1234" y="130" width="280" height="250" class="box-slate" />
+<rect x="1439" y="141" width="63" height="20" rx="5" fill="#475569" />
+<text x="1471" y="155" text-anchor="middle" class="badge">RAW RUN</text>
+<text x="1248" y="156" class="box-head">4. Roh-Extraktionsbeleg</text>
+<text x="1248" y="175" class="box-code">runs-Tabelle (SQLite)</text>
+<text x="1248" y="195" class="box-text">• Unveränderte Modell-Antwort</text>
+<text x="1248" y="213" class="box-text">• Erkennt partielle Schema-Rettung</text>
+<text x="1248" y="231" class="box-text">  als SCHEMA_SALVAGED</text>
+<text x="1248" y="249" class="box-text">• Speichert Modell-Input für</text>
+<text x="1248" y="267" class="box-text">  Inspektor-Prüfung</text>
+<line x1="394" y1="255" x2="444" y2="255" class="edge" />
+<text x="419" y="248" text-anchor="middle" class="edge-label">DocLang / MD</text>
+<line x1="794" y1="255" x2="844" y2="255" class="edge" />
+<text x="819" y="248" text-anchor="middle" class="edge-label">JSON-Schema</text>
+<line x1="1184" y1="255" x2="1234" y2="255" class="edge" />
+<text x="1209" y="248" text-anchor="middle" class="edge-label">LLM Output</text>
+<rect x="44" y="468" width="360" height="262" class="box-emerald" />
+<rect x="308" y="479" width="84" height="20" rx="5" fill="#059669" />
+<text x="350" y="493" text-anchor="middle" class="badge">TEXT CHECK</text>
+<text x="58" y="494" class="box-head">5. Text- &amp; Typografie-Verifikation</text>
+<text x="58" y="513" class="box-code">Sources.locate() · _normalized_spans()</text>
+<text x="58" y="533" class="box-text">• Pass 1: Exakter Unicode-Codepoint-Span im Element</text>
+<text x="58" y="551" class="box-text">• Pass 2: Index-erhaltende Normalisierung:</text>
+<text x="58" y="569" class="box-text">  – PDF-Ligaturen (ﬁ -&gt; fi, ﬂ -&gt; fl, ﬀ -&gt; ff)</text>
+<text x="58" y="587" class="box-text">  – Silbentrennung am Zeilenende (-\n)</text>
+<text x="58" y="605" class="box-text">  – Unsichtbare Soft-Hyphens (\u00ad, \u200b)</text>
+<text x="58" y="623" class="box-text">• Pass 3: Unabhängige Wortgrenzen (&#x27;5%&#x27; != &#x27;15%&#x27;)</text>
+<rect x="454" y="468" width="350" height="262" class="box-emerald" />
+<rect x="694" y="479" width="98" height="20" rx="5" fill="#059669" />
+<text x="743" y="493" text-anchor="middle" class="badge">STRUCT CHECK</text>
+<text x="468" y="494" class="box-head">6. Tabellen-, Chart- &amp; Seiten-Anker</text>
+<text x="468" y="513" class="box-code">_table_matches() · adjacent_spans()</text>
+<text x="468" y="533" class="box-text">• Prüft exakte Zelle sowie verbundene Spans</text>
+<text x="468" y="551" class="box-text">  (start_row..end_row, start_col..end_col)</text>
+<text x="468" y="569" class="box-text">• Minus-Normalisierung (&#x27;−2,5&#x27; == &#x27;-2,5&#x27;)</text>
+<text x="468" y="587" class="box-text">• Zitatlisten inkl. deutscher Anführungszeichen „...“</text>
+<text x="468" y="605" class="box-text">• Seitenumbruch-Spans überspringen Kopf-/Fußzeilen</text>
+<rect x="854" y="468" width="330" height="262" class="box-amber" />
+<rect x="1095" y="479" width="77" height="20" rx="5" fill="#d97706" />
+<text x="1134" y="493" text-anchor="middle" class="badge">AMBIGUITY</text>
+<text x="868" y="494" class="box-head">7. Mehrdeutigkeit &amp; Kandidaten</text>
+<text x="868" y="513" class="box-code">candidate_anchors · ambiguous_count</text>
+<text x="868" y="533" class="box-text">• Wenn Zitat mehrfach vorkommt: KEIN blindes</text>
+<text x="868" y="551" class="box-text">  Raten der ersten Fundstelle!</text>
+<text x="868" y="569" class="box-text">• Status bleibt offen (MULTIPLE_MATCHES)</text>
+<text x="868" y="587" class="box-text">• Bis zu 5 konkrete Kandidatenstellen +</text>
+<text x="868" y="605" class="box-text">  Gesamtzahl zur 1-Klick-Auswahl in der UI</text>
+<rect x="1234" y="468" width="280" height="262" class="box-teal" />
+<rect x="1418" y="479" width="84" height="20" rx="5" fill="#0d9488" />
+<text x="1460" y="493" text-anchor="middle" class="badge">VERIFIED A</text>
+<text x="1248" y="494" class="box-head">8. Freigabe an Stufe B &amp; C</text>
+<text x="1248" y="513" class="box-code">a_status.py · research.catalog()</text>
+<text x="1248" y="533" class="box-text">• Nur SOURCE_RESOLVED &amp; nicht</text>
+<text x="1248" y="551" class="box-text">  verworfene Beobachtungen sind</text>
+<text x="1248" y="569" class="box-text">  zitierbar (citation_ready)</text>
+<text x="1248" y="587" class="box-text">• Ausgeschlossene Punkte mit</text>
+<text x="1248" y="605" class="box-text">  Klartext-Grund dokumentiert</text>
+<path d="M 1374 380 L 1374 410 L 224 410 L 224 468" class="edge-teal" />
+<text x="800" y="406" text-anchor="middle" class="edge-label">Jedes Zitat &amp; jeder Messwert</text>
+<line x1="404" y1="598" x2="454" y2="598" class="edge" />
+<text x="429" y="591" text-anchor="middle" class="edge-label">Fallback</text>
+<line x1="804" y1="598" x2="854" y2="598" class="edge-amber" />
+<text x="829" y="591" text-anchor="middle" class="edge-label">Treffer &gt; 1</text>
+<line x1="1184" y1="598" x2="1234" y2="598" class="edge-teal" />
+<text x="1209" y="591" text-anchor="middle" class="edge-label">1-Klick Heilung / Eindeutig</text>
+</svg>
